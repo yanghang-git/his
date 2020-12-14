@@ -9,6 +9,6 @@
         <setting name="logImpl" value="SLF4J"/>
     </settings>
     <typeAliases>
-        <package name="com.yh.smbms"/>
+        <package name="com.his.pojo"/>
     </typeAliases>
 </configuration>

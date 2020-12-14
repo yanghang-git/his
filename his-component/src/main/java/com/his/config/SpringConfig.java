@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -19,8 +20,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 import java.io.IOException;
 
+/**
+ * Description: Spring配置
+ * Date: 20-12-10
+ *
+ * @author yh
+ */
 @MapperScan(basePackages = "com.his.mapper")
-//@ComponentScan(basePackages = "com.his.service")
+@ComponentScan(basePackages = {"com.his.service", "com.his.config.etc"})
 @PropertySource("classpath:jdbc.properties")
 @Configuration
 @EnableTransactionManagement
@@ -44,18 +51,16 @@ public class SpringConfig {
         return new PathMatchingResourcePatternResolver();
     }
 
-/*
     @Bean
     public MybatisSqlSessionFactoryBean sqlSessionFactoryBean() throws IOException {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource());
         sqlSessionFactoryBean.setConfigLocation(resolver().getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactoryBean.setMapperLocations(resolver().getResources("classpath:mapper/*Mapper.xml"));
+        sqlSessionFactoryBean.setMapperLocations(resolver().getResources("classpath:mapper/*.xml"));
         sqlSessionFactoryBean.setGlobalConfig(globalConfig());
         sqlSessionFactoryBean.setPlugins(mybatisPlusInterceptor());
         return sqlSessionFactoryBean;
     }
-*/
 
     @Bean
     public DataSourceTransactionManager dataSourceTransactionManager() {
