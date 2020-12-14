@@ -29,7 +29,6 @@ public class KpUserServiceImpl extends ServiceImpl<KpUserMapper, KpUser> impleme
     public Page<KpUser> searchPage(Integer current, Integer size, String loginName, String email, String phone) {
         Page<KpUser> page=new Page<>(current,size);
         LambdaQueryWrapper<KpUser> wrapper = new LambdaQueryWrapper<>();
-        System.out.println(1);
         wrapper.like(!StringUtils.isEmpty(loginName), KpUser::getLoginName, loginName);
         wrapper.like(!StringUtils.isEmpty(email), KpUser::getEmail, email);
         wrapper.like(!StringUtils.isEmpty(phone), KpUser::getMobileNo, phone);

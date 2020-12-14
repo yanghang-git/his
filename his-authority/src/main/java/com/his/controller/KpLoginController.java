@@ -39,7 +39,7 @@ public class KpLoginController {
     }
 
     @PostMapping("/login")
-    public String toLogin(String loginName, String password) {
+    public String doLogin(String loginName, String password) {
         UsernamePasswordToken token = new UsernamePasswordToken(loginName, password);
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
@@ -49,9 +49,7 @@ public class KpLoginController {
     @RequestMapping("/index")
     public String doIndex(ModelMap modelMap) {
         Session sess = SecurityUtils.getSubject().getSession();
-        if (sess.getAttribute(HisMvcConstant.ATTR_MENU) == null) {
-            sess.setAttribute(HisMvcConstant.ATTR_MENU, kpPermissionService.searchMenuMap());
-        }
+        sess.setAttribute(HisMvcConstant.ATTR_MENU, kpPermissionService.searchMenuMap());
         modelMap.addAttribute(HisMvcConstant.ATTR_MENU, sess.getAttribute(HisMvcConstant.ATTR_MENU));
         return "index";
     }
