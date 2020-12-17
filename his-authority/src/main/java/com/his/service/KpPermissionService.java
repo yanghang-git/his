@@ -1,6 +1,9 @@
 package com.his.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.his.pojo.KpPermission;
+import com.his.util.LayuiTreeData;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +14,7 @@ import java.util.Map;
  *
  * @author yh
  */
-public interface KpPermissionService {
+public interface KpPermissionService extends IService<KpPermission> {
     /**
      * 根据角色Id查询该角色具有的权限
      * @param roleIds 角色Id
@@ -26,4 +29,12 @@ public interface KpPermissionService {
      * @return 菜单Map
      */
     Map<KpPermission, List<KpPermission>> searchMenuMap();
+
+    Page<KpPermission> searchPage(Integer current, Integer size, String keyword);
+
+    List<LayuiTreeData> searchPermTree(Integer roleId);
+
+    List<LayuiTreeData> searchPermTree();
+
+    List<KpPermission> searchPermMenu();
 }

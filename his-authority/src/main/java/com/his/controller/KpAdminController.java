@@ -1,9 +1,10 @@
 package com.his.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.his.pojo.KpUser;
-import com.his.service.KpUserService;
+import com.his.pojo.KpAdmin;
+import com.his.service.KpAdminService;
 import com.his.util.LayuiResult;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,32 +18,36 @@ import java.util.List;
  * @author yh
  */
 @RestController
-@RequestMapping("/user/")
-public class KpUserController {
+@RequestMapping("/admin/")
+public class KpAdminController {
     @Autowired
-    private KpUserService kpUserService;
+    private KpAdminService kpAdminService;
 
+    @RequiresPermissions("admin:search")
     @RequestMapping("getPage")
-    public LayuiResult<List<KpUser>> getPageByUsernameAndRoleId(Integer page, Integer limit, String loginName, String email, String phone) {
-        Page<KpUser> userPage = kpUserService.searchPage(page, limit, loginName, email, phone);
+    public LayuiResult<List<KpAdmin>> getPageByUsernameAndRoleId(Integer page, Integer limit, String loginName, String email, String phone) {
+        Page<KpAdmin> userPage = kpAdminService.searchPage(page, limit, loginName, email, phone);
         return LayuiResult.success(userPage);
     }
 
+    @RequiresPermissions("admin:add")
     @RequestMapping("save")
-    public LayuiResult<?> save(KpUser user) {
-        boolean flag = kpUserService.save(user);
+    public LayuiResult<?> save(KpAdmin user) {
+        boolean flag = kpAdminService.save(user);
         return flag ? LayuiResult.success("添加成功") : LayuiResult.failed("添加失败");
     }
 
+    @RequiresPermissions("admin:edit")
     @RequestMapping("edit")
-    public LayuiResult<?> edit(KpUser user) {
-        boolean flag = kpUserService.updateById(user);
+    public LayuiResult<?> edit(KpAdmin user) {
+        boolean flag = kpAdminService.updateById(user);
         return flag ? LayuiResult.success("修改成功") : LayuiResult.failed("修改失败");
     }
 
+    @RequiresPermissions("admin:remove")
     @RequestMapping("remove")
     public LayuiResult<?> remove(Integer id) {
-        boolean flag = kpUserService.removeById(id);
+        boolean flag = kpAdminService.removeById(id);
         return flag ? LayuiResult.success("删除成功") : LayuiResult.failed("删除失败");
     }
 }

@@ -1,11 +1,18 @@
 package com.his.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.shiro.mgt.SecurityManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.Properties;
 
 /**
  * Description: SpringMvc配置
@@ -18,6 +25,22 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 public class SpringMvcConfig implements WebMvcConfigurer {
 
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(@Qualifier("securityManager")SecurityManager securityManager) {
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
+        creator.setProxyTargetClass(true);
+        return creator;
+    }
+
+    @Bean
+    public SimpleMappingExceptionResolver simpleMappingExceptionResolver() {
+        SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
+        Properties mappings = new Properties();
+        mappings.setProperty("org.apache.shiro.authz.UnauthorizedException", "unauthorized");
+        resolver.setExceptionMappings(mappings);
+        resolver.setDefaultErrorView("login");
+        return resolver;
+    }
 
     @Bean
     public ViewResolver viewResolver() {
@@ -34,8 +57,12 @@ public class SpringMvcConfig implements WebMvcConfigurer {
             registry.addResourceHandler("/webjars/**")
                     .addResourceLocations("classpath:/META-INF/resources/webjars/");
         }
-
+        if (!registry.hasMappingForPattern("/js/**")) {
+            registry.addResourceHandler("/js/**")
+                    .addResourceLocations("/js/");
+        }
     }
+
 
 
 }

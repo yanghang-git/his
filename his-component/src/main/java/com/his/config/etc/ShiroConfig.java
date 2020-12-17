@@ -1,16 +1,21 @@
 package com.his.config.etc;
 
+import com.baomidou.mybatisplus.extension.api.R;
 import com.his.shiro.HisRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.SimpleIdGenerator;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Description: Shiro配置文件
@@ -78,4 +83,10 @@ public class ShiroConfig {
         return ehCacheManager;
     }
 
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager());
+        return advisor;
+    }
 }

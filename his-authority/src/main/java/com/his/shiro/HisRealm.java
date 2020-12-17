@@ -1,9 +1,9 @@
 package com.his.shiro;
 
-import com.his.pojo.KpUser;
+import com.his.pojo.KpAdmin;
 import com.his.service.KpPermissionService;
 import com.his.service.KpRoleService;
-import com.his.service.KpUserService;
+import com.his.service.KpAdminService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -25,7 +25,7 @@ import java.util.List;
 public class HisRealm extends AuthorizingRealm {
 
     @Autowired
-    private KpUserService kpUserService;
+    private KpAdminService kpUserService;
 
     @Autowired
     private KpRoleService kpRoleService;
@@ -36,24 +36,26 @@ public class HisRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        KpUser user = (KpUser) principal.getPrimaryPrincipal();
+        KpAdmin user = (KpAdmin) principal.getPrimaryPrincipal();
         List<Integer> roleIdList = kpRoleService.getRoleIdByUserId(user.getUserId());
+        List<String> roleCodeList = kpRoleService.getRoleCodeByUserId(user.getUserId());
         if (roleIdList != null  && roleIdList.size() > 0) {
             Integer[] roleIdArray = new Integer[roleIdList.size()];
             roleIdList.toArray(roleIdArray);
             List<String> permCodeList = kpPermissionService.searchPermCodeList(roleIdArray);
             info.addStringPermissions(permCodeList);
         }
+        info.addRoles(roleCodeList);
         return info;
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String loginName = (String) token.getPrincipal();
-        KpUser kpUser = kpUserService.getKpUserByLoginName(loginName);
-        if (kpUser == null) {
+        KpAdmin kpAdmin = kpUserService.getKpUserByLoginName(loginName);
+        if (kpAdmin == null) {
             return null;
         }
-        return new SimpleAuthenticationInfo(kpUser, kpUser.getPassword(), getName());
+        return new SimpleAuthenticationInfo(kpAdmin, kpAdmin.getPassword(), getName());
     }
 }

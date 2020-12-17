@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class KpUser implements Serializable {
+public class KpAdmin implements Serializable {
 
   private static final long serialVersionUID = -7682820027424673857L;
   private Integer userId;
@@ -22,9 +22,9 @@ public class KpUser implements Serializable {
   private String address;
   private String isDel;
 
-  public KpUser() {}
+  public KpAdmin() {}
 
-  public KpUser(Integer userId, String loginName, String username, String email, Boolean gender, String mobileNo, String birthDate, String password, LocalDateTime createTime, String address, String isDel) {
+  public KpAdmin(Integer userId, String loginName, String username, String email, Boolean gender, String mobileNo, String birthDate, String password, LocalDateTime createTime, String address, String isDel) {
     this.userId = userId;
     this.loginName = loginName;
     this.username = username;

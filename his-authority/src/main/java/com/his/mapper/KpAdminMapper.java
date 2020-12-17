@@ -1,7 +1,7 @@
 package com.his.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.his.pojo.KpUser;
+import com.his.pojo.KpAdmin;
 
 /**
  * Description: TO DO
@@ -9,5 +9,5 @@ import com.his.pojo.KpUser;
  *
  * @author yh
  */
-public interface KpUserMapper extends BaseMapper<KpUser> {
+public interface KpAdminMapper extends BaseMapper<KpAdmin> {
 }

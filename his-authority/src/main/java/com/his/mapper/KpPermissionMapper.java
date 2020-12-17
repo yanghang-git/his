@@ -21,4 +21,7 @@ public interface KpPermissionMapper extends BaseMapper<KpPermission> {
             ")" +
             "</script>")
     List<String> searchPermCodeList(Integer[] roleId);
+
+    @Select("select perm_id from kp_perm_role where role_id = #{roleId}")
+    List<Integer> getPermissionIdByRoleId(Integer roleId);
 }

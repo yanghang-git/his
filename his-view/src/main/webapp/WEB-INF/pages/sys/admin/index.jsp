@@ -70,35 +70,35 @@
 
 
 <div id="userBox" style="padding: 15px">
-    <form class="layui-form">
+    <form class="layui-form" lay-filter="userBoxFilter">
         <div class="layui-form-item">
-            <label class="layui-form-label">姓名</label>
+            <label class="layui-form-label">登录姓名</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="loginName" required  lay-verify="required" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="gender" required  lay-verify="required" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="email" required  lay-verify="required" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">手机</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="mobileNo" required  lay-verify="required" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">加入时间</label>
             <div class="layui-input-block">
-                <input type="text" name="title" id="date" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="createTime" id="date" required  lay-verify="required" placeholder="请输入" class="layui-input">
             </div>
         </div>
     </form>
@@ -120,7 +120,7 @@
             id: 'userTableId',
             elem: '#userTable',
             page: true,
-            url: '/user/getPage', //数据接口
+            url: '/admin/getPage', //数据接口parsererror
             toolbar: '#userTableToolbar',
             cols: [[ //表头
                 {type: 'checkbox'},
@@ -132,20 +132,22 @@
                 {field: 'mobileNo', title: '手机'},
                 {field: 'birthDate', title: '加入时间', sort: 'true'},
                 {toolbar: '#userTableToolb', title: '操作'}
-            ]]
+            ]],
+            error: function() {
+                console.log(123);
+            }
         });
 
         table.on('tool(userTableFilter)', function ({event, data}) {
-            console.log(data);
             switch (event) {
                 case "security":
-                    // security();
+                    security(data.userId);
                     break;
                 case "edit":
-                    // edit();
+                    edit(data);
                     break;
                 case "remove":
-                    remove();
+                    remove([data.userId]);
                     break;
             }
         })
@@ -174,6 +176,27 @@
                 auto: ['300px'],
                 btn: ['保存', '取消'],
                 btn1: function(index) {
+                    console.log(form.val('userBox'));
+                    layer.close(index);
+                }
+            });
+        })
+    }
+
+    // 修改user
+    function edit(data) {
+        layui.use(['jquery', 'form', 'layer'], function() {
+            let $ = layui.$;
+            let form = layui.form;
+            let layer = layui.layer;
+            console.log(data)
+            form.val("userBoxFilter", data)
+            layer.open({
+                type: 1,
+                content: $('#userBox'),
+                auto: ['300px'],
+                btn: ['修改', '取消'],
+                btn1: function(index) {
                     layer.close(index);
                 }
             });
@@ -182,7 +205,18 @@
 
     // 删除user
     function remove(userIdArr) {
-        console.log(userIdArr);
+        layui.use(['layer'], function() {
+            let layer = layui.layer;
+            if (userIdArr.length === 0) {
+                layer.alert("请至少选中一条数据");
+            }
+            console.log(roleIdArr);
+        });
+    }
+
+    // 改修user角色权限
+    function security(userId) {
+        console.log(userId);
     }
 
     // 点击查询

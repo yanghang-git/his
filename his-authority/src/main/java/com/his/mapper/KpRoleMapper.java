@@ -13,6 +13,9 @@ import java.util.List;
  * @author yh
  */
 public interface KpRoleMapper extends BaseMapper<KpRole> {
-    @Select("select role_id from kp_role_user where user_id = #{userId}")
+    @Select("select role_id from kp_role_admin where admin_id = #{userId}")
     List<Integer> getRoleIdByUserId(Integer userId);
+
+    @Select("select role_code from kp_role r inner join kp_role_admin a on a.role_id = r.role_id  where a.admin_id = #{userId}")
+    List<String> getROleCodeByUserId(Integer userId);
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.regex.Pattern;
+
 /**
  * Description: TO DO
  * Date: 20-12-11
@@ -28,6 +30,6 @@ public class KpPermissionServiceTest {
 
     @Test
     public void testSearchMenuMap() {
-        System.out.println(kpPermissionService.searchMenuMap());
+        System.out.println(kpPermissionService.searchPermTree());
     }
 }

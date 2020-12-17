@@ -9,4 +9,5 @@ package com.his.util;
 public class HisMvcConstant {
     public static final String ATTR_MENU = "menu";
 
+    public static final String ATTR_NAME_EXCEPTION = "exception";
 }

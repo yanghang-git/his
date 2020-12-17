@@ -1,11 +1,14 @@
 package com.his.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
 public class KpRole implements Serializable {
 
   private static final long serialVersionUID = 7994577692974204517L;
+  @TableId(type = IdType.AUTO)
   private Integer roleId;
   private String roleCode;
   private String roleLabel;

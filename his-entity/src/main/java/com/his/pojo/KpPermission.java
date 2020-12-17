@@ -1,12 +1,15 @@
 package com.his.pojo;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
-import java.util.Comparator;
 
 public class KpPermission implements Serializable, Comparable<KpPermission> {
 
   private static final long serialVersionUID = -3820220161082018713L;
+  @TableId(type = IdType.AUTO)
   private Integer permId;
   private String permName;
   private String permCode;

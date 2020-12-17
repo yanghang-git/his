@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -89,4 +90,7 @@ public class SpringConfig {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
+
+
+
 }
