@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.pojo.KpAdmin;
 import com.his.service.KpAdminService;
 import com.his.util.LayuiResult;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class KpAdminController {
 
     @RequiresPermissions("admin:search")
     @RequestMapping("getPage")
-    public LayuiResult<List<KpAdmin>> getPageByUsernameAndRoleId(Integer page, Integer limit, String loginName, String email, String phone) {
-        Page<KpAdmin> userPage = kpAdminService.searchPage(page, limit, loginName, email, phone);
+    public LayuiResult<List<KpAdmin>> getPageByUsernameAndRoleId(Integer page, Integer limit, @RequestParam(defaultValue = "-1") Integer adminShop, String loginName, String phone) {
+        Page<KpAdmin> userPage = kpAdminService.searchPage(page, limit, adminShop, loginName, phone);
         return LayuiResult.success(userPage);
     }
 

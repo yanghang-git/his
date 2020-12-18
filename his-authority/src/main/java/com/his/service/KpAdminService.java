@@ -14,6 +14,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 public interface KpAdminService extends IService<KpAdmin> {
     KpAdmin getKpUserByLoginName(String loginName);
 
-    Page<KpAdmin> searchPage(Integer current, Integer size, String loginName, String email, String phone);
+    Page<KpAdmin> searchPage(Integer current, Integer size,Integer adminShop, String loginName, String phone);
 
 }

@@ -127,6 +127,7 @@
     </form>
 </div>
 <script src="js/layuiTreeUtil.js"></script>
+<script src="js/util.js"></script>
 <script>
     // 侧边栏需要element模块的支持
     layui.use(['element']);
@@ -234,16 +235,6 @@
             });
         })
     }
-
-    // 根据给定的数组去转换成一个map。 key = [key]   value = this
-    function getMapByArr(arr, key) {
-        let map = new Map();
-        for(let item of arr) {
-            map.set(item[key] + "", item);
-        }
-        return map;
-    }
-
 
     // 添加perm
     function add() {

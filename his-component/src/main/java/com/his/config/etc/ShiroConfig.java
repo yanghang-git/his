@@ -1,6 +1,5 @@
 package com.his.config.etc;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.his.shiro.HisRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
@@ -10,12 +9,9 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.SimpleIdGenerator;
-import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Description: Shiro配置文件
@@ -35,10 +31,10 @@ public class ShiroConfig {
         // 没有权限时跳转的路径
         shiroFilterFactoryBean.setUnauthorizedUrl("/login");
         Map<String, String> map = new HashMap<>();
+        map.put("/logout", "logout");
         map.put("/webjars/**", "anon");
         map.put("/login.jsp", "anon");
         map.put("/**", "authc");
-        map.put("/logout", "logout");
         // authc 登录后可以访问，  anon 所有人都无条件可以访问  logout 推出功能
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
         return shiroFilterFactoryBean;

@@ -37,8 +37,8 @@ public class HisRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         KpAdmin user = (KpAdmin) principal.getPrimaryPrincipal();
-        List<Integer> roleIdList = kpRoleService.getRoleIdByUserId(user.getUserId());
-        List<String> roleCodeList = kpRoleService.getRoleCodeByUserId(user.getUserId());
+        List<Integer> roleIdList = kpRoleService.getRoleIdByUserId(user.getAdminId());
+        List<String> roleCodeList = kpRoleService.getRoleCodeByUserId(user.getAdminId());
         if (roleIdList != null  && roleIdList.size() > 0) {
             Integer[] roleIdArray = new Integer[roleIdList.size()];
             roleIdList.toArray(roleIdArray);
@@ -52,10 +52,11 @@ public class HisRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String loginName = (String) token.getPrincipal();
+        System.out.println(loginName);
         KpAdmin kpAdmin = kpUserService.getKpUserByLoginName(loginName);
         if (kpAdmin == null) {
             return null;
         }
-        return new SimpleAuthenticationInfo(kpAdmin, kpAdmin.getPassword(), getName());
+        return new SimpleAuthenticationInfo(kpAdmin, kpAdmin.getAdminPass(), getName());
     }
 }

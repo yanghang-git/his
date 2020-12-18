@@ -19,7 +19,7 @@
         <%-- 面包屑 --%>
         <div class="layui-row" style="background: #fff; padding: 10px 15px">
             <span class="layui-breadcrumb">
-              <a href="/index">HIS</a>
+              <a href="index">HIS</a>
               <a><cite>用户管理</cite></a>
             </span>
         </div>
@@ -28,7 +28,16 @@
         <div style="background: #fff; margin: 15px; padding: 20px">
             <%-- 筛选条件 --%>
             <form class="layui-form" lay-filter="searchForm">
+
                 <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">店面</label>
+                        <div class="layui-input-block">
+                            <select name="adminShop">
+                                <option value="-1">全部店面</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">登录名</label>
                         <div class="layui-input-block">
@@ -36,17 +45,12 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">邮箱</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="email" placeholder="请输入" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
                         <label class="layui-form-label">手机</label>
                         <div class="layui-input-block">
-                            <input type="password" name="phone" placeholder="请输入" class="layui-input">
+                            <input type="text" name="phone" placeholder="请输入" class="layui-input">
                         </div>
                     </div>
+
                     <div class="layui-inline">
                         <button class="layui-btn" type="button" id="user-search">
                             <i class="layui-icon layui-icon-search"></i>
@@ -71,10 +75,11 @@
 
 <div id="userBox" style="padding: 15px">
     <form class="layui-form" lay-filter="userBoxFilter">
+
         <div class="layui-form-item">
-            <label class="layui-form-label">登录姓名</label>
+            <label class="layui-form-label"></label>
             <div class="layui-input-block">
-                <input type="text" name="loginName" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="loginName" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -103,19 +108,32 @@
         </div>
     </form>
 </div>
+<script src="js/util.js"></script>
 <script>
     // 侧边栏需要element模块的支持
     layui.use(['element']);
 
-    // 使用时间模块
-    layui.use('laydate', function() {
-        layui.laydate.render({elem: '#date'})
+    // 初始化归属的门店
+    layui.use('jquery', function() {
+        let $ = layui.$;
+        $.ajax({
+            url: "/shop/list",
+            method: 'post',
+            async : false,
+            success: function({data}) {
+                let $select = $('select[name=adminShop]');
+                for (let shop of data) {
+                    $select.append(`<option value='` + shop.shopId + `'> ` + shop.shopName + `</option>`)
+                }
+                sessionStorage.setItem("shopCacheMap", JSON.stringify(data));
+            }
+        })
     })
-
 
     // userTable的表格相关操作
     layui.use(['table'], function () {
         let table = layui.table;
+        let shopCacheMap = getMapByArr(JSON.parse(sessionStorage.getItem("shopCacheMap")), 'shopId');
         table.render({
             id: 'userTableId',
             elem: '#userTable',
@@ -125,17 +143,13 @@
             cols: [[ //表头
                 {type: 'checkbox'},
                 {type: "numbers", title: '#'},
-                {field: 'username', title: '姓名'},
-                {field: 'loginName', title: '登录名'},
-                {field: 'gender', title: '性别', templet: d => d.gender === null ? "" : d.gender ? "男" : "女"},
-                {field: 'email', title: '邮箱'},
-                {field: 'mobileNo', title: '手机'},
-                {field: 'birthDate', title: '加入时间', sort: 'true'},
+                {field: 'adminName', title: '姓名'},
+                {field: 'adminUsername', title: '登录名'},
+                {field: 'adminSex', title: '性别', templet: d => d.adminSex ? "男" : "女"},
+                {field: 'adminPhone', title: '手机'},
+                {field: 'adminShop', title: '店面', templet: d => shopCacheMap.has(d.adminShop + "") ? shopCacheMap.get(d.adminShop + "").shopName : ""},
                 {toolbar: '#userTableToolb', title: '操作'}
-            ]],
-            error: function() {
-                console.log(123);
-            }
+            ]]
         });
 
         table.on('tool(userTableFilter)', function ({event, data}) {
@@ -164,8 +178,12 @@
         });
     });
 
+
+
     // 添加user
     function add() {
+
+
         layui.use(['jquery', 'form', 'layer'], function() {
             let $ = layui.$;
             let form = layui.form;

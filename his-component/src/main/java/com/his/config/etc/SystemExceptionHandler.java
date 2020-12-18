@@ -41,7 +41,9 @@ public class SystemExceptionHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                writer.close();
+                if (writer != null) {
+                    writer.close();
+                }
             }
         }
     }

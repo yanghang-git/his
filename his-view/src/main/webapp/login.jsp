@@ -14,7 +14,7 @@
 </head>
 <body>
 <h1>${exception}</h1>
-<form action="/login" method="post">
+<form action="login" method="post">
     <input type="text" name="loginName" value="admin">
     <input type="text" name="password" value="12345">
     <button type="submit">login</button>
