@@ -37,4 +37,6 @@ public interface KpPermissionService extends IService<KpPermission> {
     List<LayuiTreeData> searchPermTree();
 
     List<KpPermission> searchPermMenu();
+
+    Boolean checkPermRoleIsExist(Integer[] ids);
 }

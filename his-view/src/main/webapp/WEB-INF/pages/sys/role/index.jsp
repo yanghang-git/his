@@ -198,28 +198,36 @@
 
     // 删除role
     function remove(roleIdArr) {
+        if (roleIdArr.length === 0) {
+            layer.alert("请至少选中一条数据");
+            return;
+        }
         layui.use(['layer', 'jquery', 'table'], function () {
             let layer = layui.layer;
             let $ = layui.$;
             let table = layui.table;
-            if (roleIdArr.length === 0) {
-                layer.alert("请至少选中一条数据");
-                return;
-            }
-            $.ajax({
-                url: '/role/remove',
-                method: 'post',
-                data: {ids: roleIdArr},
-                traditional: true,
-                success: function ({code, msg}) {
-                    if (code > 0) {
-                        table.reload('roleTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+
+            layer.confirm('你确定要删除吗?', {
+                icon: 3,
+                title: '提示',
+                btn: ['删除', '取消']
+            }, function (index) {
+                $.ajax({
+                    url: '/role/remove',
+                    method: 'post',
+                    data: {ids: roleIdArr},
+                    traditional: true,
+                    success: function ({code, msg}) {
+                        if (code > 0) {
+                            table.reload('roleTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                        }
+                        layer.msg(msg);
+                    },
+                    error: function (resp) {
+                        layer.msg(resp.status + " " + resp.statusMessage);
                     }
-                    layer.msg(msg);
-                },
-                error: function (resp) {
-                    layer.msg(resp.status + " " + resp.statusMessage);
-                }
+                })
+                layer.close(index);
             })
         });
     }
@@ -246,14 +254,14 @@
                 area: ['280px', '420px'],
                 btn: ['保存', '取消'],
                 content: $('#permTree'),
-                yes: function(index) {
+                yes: function (index) {
                     let permIds = getLayuiTreeCheckedId(tree.getChecked('roleTreeId'));
                     $.ajax({
                         url: 'role/changePerm',
                         method: 'post',
                         data: {permIds, roleId},
                         traditional: true,
-                        success: function({msg}) {
+                        success: function ({msg}) {
                             layer.msg(msg);
                         },
                         error: function (resp) {

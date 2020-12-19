@@ -6,6 +6,7 @@ import com.his.mapper.KpPermissionMapper;
 import com.his.pojo.KpPermRole;
 import com.his.pojo.KpPermission;
 import com.his.service.KpPermissionService;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,6 @@ public class KpPermissionServiceTest {
     public void insertPerm() {
         List<KpPermission> roles = kpPermissionService.list();
         List<KpPermRole> collect = roles.stream().map(item -> new KpPermRole(item.getPermId(), 10)).collect(Collectors.toList());
-
-        System.out.println(collect);
-
         kpPermRoleMapper.insertBatch(collect);
     }
 
@@ -51,6 +49,7 @@ public class KpPermissionServiceTest {
 
     @Test
     public void testSearchMenuMap() {
+        System.out.println(new Md5Hash(null, null, 1));
         System.out.println(kpPermissionService.searchPermTree());
     }
 }

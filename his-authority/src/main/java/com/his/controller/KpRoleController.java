@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.pojo.KpRole;
 import com.his.service.KpRoleService;
 import com.his.util.LayuiResult;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,13 @@ import java.util.List;
 public class KpRoleController {
     @Autowired
     private KpRoleService kproleService;
+
+    @RequiresPermissions(value = {"role:search", "admin:changePermission"}, logical = Logical.OR)
+    @RequestMapping("list")
+    public LayuiResult<List<KpRole>> getList() {
+        List<KpRole> list = kproleService.list();
+        return LayuiResult.success(list);
+    }
 
     @RequiresPermissions("role:search")
     @RequestMapping("getPage")
@@ -48,14 +56,23 @@ public class KpRoleController {
     @RequiresPermissions("role:remove")
     @RequestMapping("remove")
     public LayuiResult<?> remove(Integer[] ids) {
+        if (kproleService.checkRoleAdminIsExist(ids)) {
+            return LayuiResult.failed("删除失败， 删除的角色正在使用中");
+        }
         boolean flag = kproleService.removeByIds(Arrays.asList(ids));
         return flag ? LayuiResult.success("删除成功") : LayuiResult.failed("删除失败");
     }
 
     @RequiresPermissions("role:changePermission")
     @RequestMapping("changePerm")
-    public LayuiResult<?> changeAuthByRoleId(Integer roleId, Integer[] permIds) {
+    public LayuiResult<?> changePermission(Integer roleId, Integer[] permIds) {
         Boolean flag = kproleService.changePermByRoleId(roleId, permIds);
         return flag ? LayuiResult.success("授权成功") : LayuiResult.failed("授权失败");
+    }
+
+    @RequiresPermissions("admin:changePermission")
+    @RequestMapping("getRoleIdByUserId")
+    public LayuiResult<List<Integer>> getRoleIdByUserId(Integer adminId) {
+        return LayuiResult.success(kproleService.getRoleIdByUserId(adminId));
     }
 }

@@ -3,9 +3,12 @@ package com.his.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.his.mapper.KpPermRoleMapper;
 import com.his.mapper.KpPermissionMapper;
+import com.his.pojo.KpPermRole;
 import com.his.pojo.KpPermission;
 import com.his.pojo.KpRole;
+import com.his.pojo.KpRoleAdmin;
 import com.his.service.KpPermissionService;
 import com.his.util.LayuiTreeData;
 import org.apache.shiro.SecurityUtils;
@@ -31,6 +34,9 @@ public class KpPermissionServiceImpl extends ServiceImpl<KpPermissionMapper, KpP
 
     @Autowired
     private KpPermissionMapper kpPermissionMapper;
+
+    @Autowired
+    private KpPermRoleMapper kpPermRoleMapper;
 
     /**
      * 根据角色Id查询该角色具有的权限
@@ -110,6 +116,13 @@ public class KpPermissionServiceImpl extends ServiceImpl<KpPermissionMapper, KpP
         LambdaQueryWrapper<KpPermission> wrapper = new LambdaQueryWrapper<>();
         wrapper.likeLeft(KpPermission::getPermCode, ":menu");
         return list(wrapper);
+    }
+
+    @Override
+    public Boolean checkPermRoleIsExist(Integer[] ids) {
+        LambdaQueryWrapper<KpPermRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(KpPermRole::getPermId, Arrays.asList(ids));
+        return kpPermRoleMapper.selectCount(wrapper) != 0;
     }
 
     private List<LayuiTreeData> searchPermTreeBranch(List<Integer> permissionIdList, Integer permissionId) {

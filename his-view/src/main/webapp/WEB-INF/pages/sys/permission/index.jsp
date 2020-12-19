@@ -317,30 +317,38 @@
 
     // 删除perm
     function remove(permIdArr) {
+        if (permIdArr.length === 0) {
+            layer.alert("请至少选中一条数据");
+            return;
+        }
         layui.use(['layer', 'jquery', 'table'], function () {
             let layer = layui.layer;
             let $ = layui.$;
             let table = layui.table;
-            if (permIdArr.length === 0) {
-                layer.alert("请至少选中一条数据");
-                return;
-            }
-            $.ajax({
-                url: '/perm/remove',
-                method: 'post',
-                data: {ids: permIdArr},
-                traditional: true,
-                success: function ({code, msg}) {
-                    if (code > 0) {
-                        reloadPermissionTree();
-                        table.reload('permTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+            layer.confirm('你确定要删除吗?', {
+                icon: 3,
+                title: '提示',
+                btn: ['删除', '取消']
+            }, function(index) {
+                $.ajax({
+                    url: '/perm/remove',
+                    method: 'post',
+                    data: {ids: permIdArr},
+                    traditional: true,
+                    success: function ({code, msg}) {
+                        if (code > 0) {
+                            reloadPermissionTree();
+                            table.reload('permTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                        }
+                        layer.msg(msg);
+                    },
+                    error: function (resp) {
+                        layer.msg(resp.status + " " + resp.statusMessage);
                     }
-                    layer.msg(msg);
-                },
-                error: function (resp) {
-                    layer.msg(resp.status + " " + resp.statusMessage);
-                }
+                })
+                layer.close(index);
             })
+
         });
     }
 

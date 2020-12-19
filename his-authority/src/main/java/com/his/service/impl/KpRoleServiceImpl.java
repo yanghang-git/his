@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.his.mapper.KpPermRoleMapper;
+import com.his.mapper.KpRoleAdminMapper;
 import com.his.mapper.KpRoleMapper;
 import com.his.pojo.KpPermRole;
 import com.his.pojo.KpRole;
+import com.his.pojo.KpRoleAdmin;
 import com.his.service.KpRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +34,9 @@ public class KpRoleServiceImpl extends ServiceImpl<KpRoleMapper, KpRole> impleme
     @Autowired
     private KpPermRoleMapper kpPermRoleMapper;
 
+    @Autowired
+    private KpRoleAdminMapper kpRoleAdminMapper;
+
     @Override
     public List<Integer> getRoleIdByUserId(Integer userId) {
         return kpRoleMapper.getRoleIdByUserId(userId);
@@ -39,6 +45,13 @@ public class KpRoleServiceImpl extends ServiceImpl<KpRoleMapper, KpRole> impleme
     @Override
     public List<String> getRoleCodeByUserId(Integer userId) {
         return kpRoleMapper.getROleCodeByUserId(userId);
+    }
+
+    @Override
+    public Boolean checkRoleAdminIsExist(Integer[] ids) {
+        LambdaQueryWrapper<KpRoleAdmin> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(KpRoleAdmin::getRoleId, Arrays.asList(ids));
+        return kpRoleAdminMapper.selectCount(wrapper) != 0;
     }
 
     @Override

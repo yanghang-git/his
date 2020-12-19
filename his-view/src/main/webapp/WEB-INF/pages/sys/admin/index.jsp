@@ -27,7 +27,7 @@
         <%-- main --%>
         <div style="background: #fff; margin: 15px; padding: 20px">
             <%-- 筛选条件 --%>
-            <form class="layui-form" lay-filter="searchForm">
+            <form class="layui-form search" lay-filter="searchForm">
 
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -47,7 +47,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">手机</label>
                         <div class="layui-input-block">
-                            <input type="text" name="phone" placeholder="请输入" class="layui-input">
+                            <input type="text" name="phone" maxlength="11" placeholder="请输入" class="layui-input">
                         </div>
                     </div>
 
@@ -59,6 +59,7 @@
                 </div>
 
             </form>
+
             <%-- table --%>
             <div>
                 <table id="userTable" lay-filter="userTableFilter"></table>
@@ -73,37 +74,47 @@
 </div>
 
 
+<table id="roleTable" lay-filter="roleTableFilter" style="display: none"></table>
+
 <div id="userBox" style="padding: 15px">
     <form class="layui-form" lay-filter="userBoxFilter">
+        <input type="hidden" name="adminId"/>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录帐号</label>
+            <div class="layui-input-block">
+                <input type="text" name="adminUsername" maxlength="16" placeholder="请输入" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="adminPass" maxlength="16" placeholder="请输入" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="adminName" placeholder="请输入" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">单选框</label>
+            <div class="layui-input-block">
+                <input type="radio" name="adminSex" value="true" title="男" checked>
+                <input type="radio" name="adminSex" value="false" title="女">
+            </div>
+        </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label"></label>
-            <div class="layui-input-block">
-                <input type="text" name="loginName" placeholder="请输入" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">性别</label>
-            <div class="layui-input-block">
-                <input type="text" name="gender" required  lay-verify="required" placeholder="请输入" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">邮箱</label>
-            <div class="layui-input-block">
-                <input type="text" name="email" required  lay-verify="required" placeholder="请输入" class="layui-input">
-            </div>
-        </div>
         <div class="layui-form-item">
             <label class="layui-form-label">手机</label>
             <div class="layui-input-block">
-                <input type="text" name="mobileNo" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <input type="text" name="adminPhone" maxlength="11" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">加入时间</label>
+            <label class="layui-form-label">店面</label>
             <div class="layui-input-block">
-                <input type="text" name="createTime" id="date" required  lay-verify="required" placeholder="请输入" class="layui-input">
+                <select name="adminShop"></select>
             </div>
         </div>
     </form>
@@ -114,16 +125,18 @@
     layui.use(['element']);
 
     // 初始化归属的门店
-    layui.use('jquery', function() {
+    layui.use('jquery', function () {
         let $ = layui.$;
         $.ajax({
             url: "/shop/list",
             method: 'post',
-            async : false,
-            success: function({data}) {
-                let $select = $('select[name=adminShop]');
+            async: false,
+            success: function ({data}) {
+                let $searchSelect = $('.search select[name=adminShop]');
+                let $userBoxSelect = $('#userBox select[name=adminShop]');
                 for (let shop of data) {
-                    $select.append(`<option value='` + shop.shopId + `'> ` + shop.shopName + `</option>`)
+                    $searchSelect.append(`<option value='` + shop.shopId + `'> ` + shop.shopName + `</option>`)
+                    $userBoxSelect.append(`<option value='` + shop.shopId + `'> ` + shop.shopName + `</option>`)
                 }
                 sessionStorage.setItem("shopCacheMap", JSON.stringify(data));
             }
@@ -135,7 +148,7 @@
         let table = layui.table;
         let shopCacheMap = getMapByArr(JSON.parse(sessionStorage.getItem("shopCacheMap")), 'shopId');
         table.render({
-            id: 'userTableId',
+            id: 'adminTableId',
             elem: '#userTable',
             page: true,
             url: '/admin/getPage', //数据接口parsererror
@@ -147,55 +160,93 @@
                 {field: 'adminUsername', title: '登录名'},
                 {field: 'adminSex', title: '性别', templet: d => d.adminSex ? "男" : "女"},
                 {field: 'adminPhone', title: '手机'},
-                {field: 'adminShop', title: '店面', templet: d => shopCacheMap.has(d.adminShop + "") ? shopCacheMap.get(d.adminShop + "").shopName : ""},
+                {
+                    field: 'adminShop',
+                    title: '店面',
+                    templet: d => shopCacheMap.has(d.adminShop + "") ? shopCacheMap.get(d.adminShop + "").shopName : ""
+                },
                 {toolbar: '#userTableToolb', title: '操作'}
             ]]
         });
 
+
+        // 加载角色的table
+        table.render({
+            id: 'roleTableId',
+            elem: '#roleTable',
+            url: '/role/list',
+            cols: [[
+                {field: 'roleId', hide: true},
+                {type: 'checkbox'},
+                {field: 'roleLabel', title: '角色名称'},
+            ]]
+        })
+
         table.on('tool(userTableFilter)', function ({event, data}) {
             switch (event) {
                 case "security":
-                    security(data.userId);
+                    security(data.adminId);
                     break;
                 case "edit":
                     edit(data);
                     break;
                 case "remove":
-                    remove([data.userId]);
+                    remove([data.adminId]);
                     break;
             }
         })
 
-        table.on('toolbar(userTableFilter)', function({event}) {
+        table.on('toolbar(userTableFilter)', function ({event}) {
             switch (event) {
                 case "add":
                     add();
                     break;
                 case "remove":
-                    remove(table.checkStatus('userTableId').data.map(data => data.userId));
+                    remove(table.checkStatus('adminTableId').data.map(data => data.adminId));
                     break;
             }
         });
     });
 
 
-
     // 添加user
     function add() {
-
-
-        layui.use(['jquery', 'form', 'layer'], function() {
+        document.querySelector('#userBox form').reset();
+        layui.use(['jquery', 'form', 'layer', 'table'], function () {
             let $ = layui.$;
             let form = layui.form;
             let layer = layui.layer;
+            let table = layui.table;
             layer.open({
                 type: 1,
                 content: $('#userBox'),
                 auto: ['300px'],
                 btn: ['保存', '取消'],
-                btn1: function(index) {
-                    console.log(form.val('userBox'));
-                    layer.close(index);
+                btn1: function (index) {
+                    let data = form.val('userBoxFilter');
+                    if (data.adminName === '' || data.adminPass === '' || data.adminPhone === '' || data.adminUsername === '') {
+                        layer.msg('请填写完整的信息以后再次确认');
+                    } else if (data.adminUsername.length < 5) {
+                        layer.msg('登录帐号不允许少与6位');
+                    } else if (data.adminPass.length < 5) {
+                        layer.msg('登录密码不允许少与6位');
+                    } else if (!/1[3|5]\d{9}/.test(data.adminPhone)) {
+                        layer.msg('手机号必须以13/15开头')
+                    } else {
+                        $.post('/admin/save', form.val('userBoxFilter'))
+                            .done(function ({code, msg}) {
+                                if (code > 0) {
+                                    if ($('.layui-laypage-skip input').val() !== 1) {
+                                        $('.layui-laypage-skip input').val(99999);
+                                        $('.layui-laypage-skip .layui-laypage-btn').click();
+                                    } else {
+                                        table.reload('adminTableId');
+                                    }
+                                }
+                                layer.msg(msg);
+                            });
+                        layer.close(index);
+                    }
                 }
             });
         })
@@ -203,18 +254,28 @@
 
     // 修改user
     function edit(data) {
-        layui.use(['jquery', 'form', 'layer'], function() {
+        layui.use(['jquery', 'form', 'layer', 'table'], function () {
             let $ = layui.$;
             let form = layui.form;
             let layer = layui.layer;
-            console.log(data)
-            form.val("userBoxFilter", data)
+            let table = layui.table;
+            data.adminPass = '';
+            $('#userBox input[name=adminSex]').removeAttr('checked');
+            form.val("userBoxFilter", data);
+            $('#userBox input[value=' + data.adminSex + '').attr('checked', 'checked').next().click();
             layer.open({
                 type: 1,
                 content: $('#userBox'),
                 auto: ['300px'],
                 btn: ['修改', '取消'],
-                btn1: function(index) {
+                btn1: function (index) {
+                    $.post('/admin/edit', form.val('userBoxFilter'))
+                        .done(function ({code, msg}) {
+                            if (code > 0) {
+                                table.reload('adminTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                            }
+                            layer.msg(msg);
+                        });
                     layer.close(index);
                 }
             });
@@ -222,19 +283,105 @@
     }
 
     // 删除user
-    function remove(userIdArr) {
-        layui.use(['layer'], function() {
+    function remove(adminIdArr) {
+        if (adminIdArr.length === 0) {
+            layer.alert("请至少选中一条数据");
+            return;
+        }
+        layui.use(['layer', 'jquery', 'table'], function () {
             let layer = layui.layer;
-            if (userIdArr.length === 0) {
-                layer.alert("请至少选中一条数据");
-            }
-            console.log(roleIdArr);
+            let $ = layui.$;
+            let table = layui.table;
+            layer.confirm('你确定要删除吗?', {
+                icon: 3,
+                title: '提示',
+                btn: ['删除', '取消']
+            }, function(index) {
+                $.ajax({
+                    url: '/admin/remove',
+                    method: 'post',
+                    data: {ids: adminIdArr},
+                    traditional: true,
+                    success: function ({code, msg}) {
+                        if (code > 0) {
+                            table.reload('adminTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                        }
+                        layer.msg(msg);
+                    },
+                    error: function (resp) {
+                        layer.msg(resp.status + " " + resp.statusMessage);
+                    }
+                })
+                layer.close(index);
+            })
+
         });
     }
 
     // 改修user角色权限
-    function security(userId) {
-        console.log(userId);
+    function security(adminId) {
+        layui.use(['layer', 'table', 'jquery'], function () {
+            let layer = layui.layer;
+            let table = layui.table;
+            let $ = layui.$;
+            $.post('/role/getRoleIdByUserId', {adminId})
+                .done(function ({data}) {
+                    /*
+                       未知原因 在需要全选时如果是一个个的点击时，
+                           第一访问无事， 第二次则会第一个不会选中  第三次则第二不会选中  以此类推 如果到最后一个 则会回到第一个不会选中  循环
+
+                       解决方法 在得到需要选中的数据时， 判断是否是需要全选。  如果是则直接点击全选按钮即可
+                    */
+                    let $roleTableTr = $('#roleTable+div tbody tr');
+                    let $checkBoxDiv = $(this).children('td:eq(1)').children('div').children('div');
+                    if ($roleTableTr.length === data.length) {
+                        $roleTableTr.each(function () {
+                            // 将所有的多选设置为未选中
+                            if ($checkBoxDiv.hasClass('layui-form-checked')) {
+                                $checkBoxDiv.children('i').click();
+                            }
+                        });
+                        $('#roleTable+div thead tr th:eq(1) i').click();
+                    } else {
+                        $roleTableTr.each(function () {
+                            let $checkBoxDiv = $(this).children('td:eq(1)').children('div').children('div');
+                            // 将所有的多选设置为未选中
+                            if ($checkBoxDiv.hasClass('layui-form-checked')) {
+                                $checkBoxDiv.children('i').click();
+                            }
+                            // 将指定数组的内容设置为选中
+                            if (!$checkBoxDiv.hasClass('layui-form-checked') && data.indexOf(parseInt($(this).children('td:eq(0)').children('div').text())) !== -1) {
+                                console.log($checkBoxDiv[0])
+                                $checkBoxDiv.children('i').click();
+                            }
+                        });
+                    }
+                });
+
+            layer.open({
+                title: '角色列表',
+                type: 1,
+                content: $('#roleTable').next(),
+                btn: ['授权', '取消'],
+                btn1: function (index) {
+                    let roleIds = table.checkStatus('roleTableId').data.map(role => role.roleId);
+                    $.ajax({
+                        url: '/admin/changePermission',
+                        method: 'post',
+                        data: {adminId, roleIds},
+                        traditional: true,
+                        success: function ({msg}) {
+                            layer.msg(msg);
+                        },
+                        error: function (resp) {
+                            layer.msg(resp.status + " " + resp.statusMessage);
+                        }
+                    })
+                    layer.close(index);
+                }
+            });
+        })
+
     }
 
     // 点击查询
@@ -242,9 +389,8 @@
         let form = layui.form;
         let $ = layui.$;
         let table = layui.table;
-
         $("#user-search").click(function () {
-            table.reload("userTableId", {where: form.val("searchForm")})
+            table.reload("adminTableId", {where: form.val("searchForm")})
         });
     })
 

@@ -53,6 +53,9 @@ public class KpPermController {
     @RequiresPermissions("permission:remove")
     @RequestMapping("remove")
     public LayuiResult<?> remove(Integer[] ids) {
+        if (kpPermissionService.checkPermRoleIsExist(ids)) {
+            return LayuiResult.failed("删除失败， 删除的权限正在使用中");
+        }
         boolean flag = kpPermissionService.removeByIds(Arrays.asList(ids));
         return flag ? LayuiResult.success("删除成功") : LayuiResult.failed("删除失败");
     }

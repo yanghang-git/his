@@ -1,7 +1,11 @@
 package com.his.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+
 public class KpAdmin {
 
+  @TableId(type = IdType.AUTO)
   private Integer adminId;
   private String adminUsername;
   private String adminPass;

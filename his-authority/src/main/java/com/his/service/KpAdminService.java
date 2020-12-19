@@ -16,4 +16,7 @@ public interface KpAdminService extends IService<KpAdmin> {
 
     Page<KpAdmin> searchPage(Integer current, Integer size,Integer adminShop, String loginName, String phone);
 
+    boolean editKpAdminNotNullFeildById(KpAdmin admin);
+
+    Boolean changeRoleByAdminId(Integer adminId, Integer[] roleIds);
 }
