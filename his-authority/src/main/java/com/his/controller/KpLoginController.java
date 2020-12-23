@@ -1,5 +1,7 @@
 package com.his.controller;
 
+import com.his.exception.ShopNotExistException;
+import com.his.service.KpAdminService;
 import com.his.service.KpPermissionService;
 import com.his.util.HisMvcConstant;
 import org.apache.shiro.SecurityUtils;
@@ -33,6 +35,9 @@ public class KpLoginController {
     @Autowired
     private KpPermissionService kpPermissionService;
 
+    @Autowired
+    private KpAdminService kpAdminService;
+
     @GetMapping("/login")
     public String toLogin() {
         return "redirect:/login.jsp";
@@ -40,6 +45,7 @@ public class KpLoginController {
 
     @PostMapping("/login")
     public String doLogin(String loginName, String password) {
+        kpAdminService.checkAdminOfShopIsExist(loginName);
         UsernamePasswordToken token = new UsernamePasswordToken(loginName, password);
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
@@ -54,10 +60,20 @@ public class KpLoginController {
         return "index";
     }
 
+
+    @ExceptionHandler(ShopNotExistException.class)
+    public ModelAndView catchShopNotExistException(ShopNotExistException ex) {
+        ModelAndView modelAndView = new ModelAndView()
+                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, ex.getMessage());
+        modelAndView.setViewName("forward:/login.jsp");
+        return modelAndView;
+    }
+
+
     @ExceptionHandler(UnknownAccountException.class)
     public ModelAndView catchUnknownAccountException(UnknownAccountException ex) {
         ModelAndView modelAndView = new ModelAndView()
-                .addObject("exception", "帐号不存在");
+                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, "帐号不存在");
         modelAndView.setViewName("forward:/login.jsp");
         return modelAndView;
     }
@@ -65,7 +81,7 @@ public class KpLoginController {
     @ExceptionHandler(IncorrectCredentialsException.class)
     public ModelAndView catchIncorrectCredentialsException(IncorrectCredentialsException ex) {
         ModelAndView modelAndView = new ModelAndView()
-                .addObject("exception", "密码错误");
+                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, "密码错误");
         modelAndView.setViewName("forward:/login.jsp");
         return modelAndView;
     }

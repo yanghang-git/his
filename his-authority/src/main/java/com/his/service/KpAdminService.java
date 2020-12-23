@@ -19,4 +19,10 @@ public interface KpAdminService extends IService<KpAdmin> {
     boolean editKpAdminNotNullFeildById(KpAdmin admin);
 
     Boolean changeRoleByAdminId(Integer adminId, Integer[] roleIds);
+
+    /**
+     * 检查登录帐号所在的店铺是否存在  如果不存在则抛出 ShopNotExistException
+     * @param loginName 登录帐号
+     */
+    void checkAdminOfShopIsExist(String loginName);
 }

@@ -71,7 +71,7 @@ public class KpAdminController {
         return flag ? LayuiResult.success("授权成功") : LayuiResult.failed("授权失败");
     }
 
-    @ExceptionHandler(value = {MySQLIntegrityConstraintViolationException.class, MySQLIntegrityConstraintViolationException.class})
+    @ExceptionHandler(value = {MySQLIntegrityConstraintViolationException.class})
     public LayuiResult<?> MySQLIntegrityConstraintViolationExceptionHandler() {
         return LayuiResult.failed("登录帐号已存在");
     }

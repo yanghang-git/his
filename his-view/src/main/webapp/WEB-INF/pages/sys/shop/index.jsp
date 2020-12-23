@@ -20,7 +20,7 @@
         <div class="layui-row" style="background: #fff; padding: 10px 15px">
             <span class="layui-breadcrumb">
               <a href="index">HIS</a>
-              <a><cite>角色管理</cite></a>
+              <a><cite>门店管理</cite></a>
             </span>
         </div>
 
@@ -57,22 +57,19 @@
     </div>
 </div>
 
-
-<div id="permTree" style="display: none"></div>
-
-<div id="roleBox" style="padding: 15px; display: none">
-    <form class="layui-form" lay-filter="roleBoxFilter">
-        <input type="hidden" name="roleId"/>
+<div id="shopBox" style="padding: 15px; display: none">
+    <form class="layui-form" lay-filter="shopBoxFilter">
+        <input type="hidden" name="shopId"/>
         <div class="layui-form-item">
-            <label class="layui-form-label">名称</label>
+            <label class="layui-form-label">门店名称</label>
             <div class="layui-input-block">
-                <input type="text" name="roleLabel" placeholder="请输入" class="layui-input">
+                <input type="text" name="shopName" placeholder="请输入" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">Code</label>
+            <label class="layui-form-label">门店地址</label>
             <div class="layui-input-block">
-                <input type="text" name="roleCode" placeholder="请输入" class="layui-input">
+                <input type="text" name="shopAddress" placeholder="请输入" class="layui-input">
             </div>
         </div>
     </form>
@@ -89,27 +86,24 @@
             id: 'roleTableId',
             elem: '#roleTable',
             page: true,
-            url: '/role/getPage', //数据接口
+            url: '/shop/getPage', //数据接口
             toolbar: '#roleTableToolbar',
             cols: [[ //表头
                 {type: 'checkbox'},
                 {type: "numbers", title: '#'},
-                {field: 'roleLabel', title: '名称'},
-                {field: 'roleCode', title: 'Code'},
+                {field: 'shopName', title: '门店名称'},
+                {field: 'shopAddress', title: '门店地址'},
                 {toolbar: '#roleTableToolb', title: '操作'}
             ]]
         });
 
         table.on('tool(roleTableFilter)', function ({event, data}) {
             switch (event) {
-                case "security":
-                    security(data.roleId);
-                    break;
                 case "edit":
                     edit(data);
                     break;
                 case "remove":
-                    remove([data.roleId]);
+                    remove([data.shopId]);
                     break;
             }
         })
@@ -120,7 +114,7 @@
                     add();
                     break;
                 case "remove":
-                    remove(table.checkStatus('roleTableId').data.map(data => data.roleId));
+                    remove(table.checkStatus('roleTableId').data.map(data => data.shopId));
                     break;
             }
         });
@@ -135,16 +129,16 @@
             let table = layui.table;
             layer.open({
                 type: 1,
-                content: $('#roleBox'),
+                content: $('#shopBox'),
                 auto: ['300px'],
                 btn: ['保存', '取消'],
                 btn1: function (index) {
-                    let data = form.val('roleBoxFilter');
-                    if (data['roleLabel'].trim() === '' || data['roleCode'].trim() === '') {
+                    let data = form.val('shopBoxFilter');
+                    if (data['shopName'].trim() === '' || data['shopAddress'].trim() === '') {
                         layer.msg('请填写完整的信息后再次点击添加');
                         return;
                     }
-                    $.post("/role/save", data)
+                    $.post("/shop/save", data)
                         .done(function ({code, msg}) {
                             if (code > 0) {
                                 $('.layui-laypage-skip input').val(99999);
@@ -156,7 +150,7 @@
                             }
                             layer.msg(msg);
                         });
-                    $('#roleBox form')[0].reset();
+                    $('#shopBox form')[0].reset();
                     layer.close(index);
                 }
             });
@@ -170,26 +164,26 @@
             let form = layui.form;
             let layer = layui.layer;
             let table = layui.table;
-            form.val("roleBoxFilter", data)
+            form.val("shopBoxFilter", data)
             layer.open({
                 type: 1,
-                content: $('#roleBox'),
+                content: $('#shopBox'),
                 auto: ['300px'],
                 btn: ['修改', '取消'],
                 btn1: function (index) {
-                    let data = form.val('roleBoxFilter');
-                    if (data['roleLabel'].trim() === '' || data['roleCode'].trim() === '') {
+                    let data = form.val('shopBoxFilter');
+                    if (data['shopName'].trim() === '' || data['shopAddress'].trim() === '') {
                         layer.msg('请填写完整的信息后再次点击修改');
                         return;
                     }
-                    $.post("/role/edit", data)
+                    $.post("/shop/edit", data)
                         .done(function ({code, msg}) {
                             if (code > 0) {
                                 table.reload('roleTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
                             }
                             layer.msg(msg);
                         });
-                    $('#roleBox form')[0].reset();
+                    $('#shopBox form')[0].reset();
                     layer.close(index);
                 }
             });
@@ -213,7 +207,7 @@
                 btn: ['删除', '取消']
             }, function (index) {
                 $.ajax({
-                    url: '/role/remove',
+                    url: '/shop/remove',
                     method: 'post',
                     data: {ids: roleIdArr},
                     traditional: true,
@@ -229,48 +223,6 @@
                 })
                 layer.close(index);
             })
-        });
-    }
-
-
-    // 改修role角色权限
-    function security(roleId) {
-        layui.use(['tree', 'jquery', 'layer'], function () {
-            let $ = layui.$;
-            let tree = layui.tree;
-            let layer = layui.layer;
-            $.post('perm/searchPermTreeByRoleId', {roleId})
-                .done(function ({data}) {
-                    tree.render({
-                        id: 'roleTreeId',
-                        elem: '#permTree',
-                        showCheckbox: true,
-                        accordion: true,
-                        data
-                    });
-                })
-            layer.open({
-                type: 1,
-                area: ['280px', '420px'],
-                btn: ['保存', '取消'],
-                content: $('#permTree'),
-                yes: function (index) {
-                    let permIds = getLayuiTreeCheckedId(tree.getChecked('roleTreeId'));
-                    $.ajax({
-                        url: 'role/changePerm',
-                        method: 'post',
-                        data: {permIds, roleId},
-                        traditional: true,
-                        success: function ({msg}) {
-                            layer.msg(msg);
-                        },
-                        error: function (resp) {
-                            layer.msg(resp.status + " " + resp.statusMessage);
-                        }
-                    });
-                    layer.close(index);
-                }
-            });
         });
     }
 
@@ -291,7 +243,6 @@
 </html>
 <script type="text/html" id="roleTableToolb">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-xs" lay-event="security"><i class="layui-icon">&#xe672;</i></button>
         <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit"><i class="layui-icon"></i></button>
         <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove"><i class="layui-icon"></i></button>
     </div>

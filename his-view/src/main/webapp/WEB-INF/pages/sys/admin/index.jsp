@@ -56,6 +56,11 @@
                             <i class="layui-icon layui-icon-search"></i>
                         </button>
                     </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-warm" type="reset">
+                            <i class="layui-icon layui-icon-refresh"></i>
+                        </button>
+                    </div>
                 </div>
 
             </form>
@@ -98,7 +103,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">单选框</label>
+            <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
                 <input type="radio" name="adminSex" value="true" title="男" checked>
                 <input type="radio" name="adminSex" value="false" title="女">
@@ -226,9 +231,9 @@
                     let data = form.val('userBoxFilter');
                     if (data.adminName === '' || data.adminPass === '' || data.adminPhone === '' || data.adminUsername === '') {
                         layer.msg('请填写完整的信息以后再次确认');
-                    } else if (data.adminUsername.length < 5) {
+                    } else if (data.adminUsername.length < 6) {
                         layer.msg('登录帐号不允许少与6位');
-                    } else if (data.adminPass.length < 5) {
+                    } else if (data.adminPass.length < 6) {
                         layer.msg('登录密码不允许少与6位');
                     } else if (!/1[3|5]\d{9}/.test(data.adminPhone)) {
                         layer.msg('手机号必须以13/15开头')
@@ -265,18 +270,28 @@
             $('#userBox input[value=' + data.adminSex + '').attr('checked', 'checked').next().click();
             layer.open({
                 type: 1,
+                title: '只修改填写的， 为空的不修改',
                 content: $('#userBox'),
                 auto: ['300px'],
                 btn: ['修改', '取消'],
                 btn1: function (index) {
-                    $.post('/admin/edit', form.val('userBoxFilter'))
-                        .done(function ({code, msg}) {
-                            if (code > 0) {
-                                table.reload('adminTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
-                            }
-                            layer.msg(msg);
-                        });
-                    layer.close(index);
+                    let data = form.val('userBoxFilter');
+                    if (data.adminUsername !== '' && data.adminUsername.length < 6) {
+                        layer.msg('登录帐号不允许少与6位');
+                    } else if (data.adminPass !== '' && data.adminPass.length < 6) {
+                        layer.msg('登录密码不允许少与6位');
+                    } else if (data.adminPhone !== '' && !/1[3|5]\d{9}/.test(data.adminPhone)) {
+                        layer.msg('手机号必须以13/15开头')
+                    } else {
+                        $.post('/admin/edit', data)
+                            .done(function ({code, msg}) {
+                                if (code > 0) {
+                                    table.reload('adminTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                                }
+                                layer.msg(msg);
+                            });
+                        layer.close(index);
+                    }
                 }
             });
         })

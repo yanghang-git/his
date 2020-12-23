@@ -31,7 +31,7 @@ public class KpPermController {
 
     @RequiresPermissions("permission:search")
     @RequestMapping("getPage")
-    public LayuiResult<List<KpPermission>> getPageBynameAndRoleId(Integer page, Integer limit, String keyword) {
+    public LayuiResult<List<KpPermission>> getPageByKeyword(Integer page, Integer limit, String keyword) {
         Page<KpPermission> rolePage = kpPermissionService.searchPage(page, limit, keyword);
         return LayuiResult.success(rolePage);
     }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.his.exception.ShopNotExistException;
 import com.his.mapper.KpAdminMapper;
 import com.his.mapper.KpRoleAdminMapper;
 import com.his.mapper.KpRoleMapper;
@@ -35,6 +36,9 @@ public class KpAdminServiceImpl extends ServiceImpl<KpAdminMapper, KpAdmin> impl
 
     @Autowired
     private KpRoleAdminMapper kpRoleAdminMapper;
+
+    @Autowired
+    private KpAdminMapper kpAdminMapper;
 
     @Override
     public KpAdmin getKpUserByLoginName(String loginName) {
@@ -81,6 +85,17 @@ public class KpAdminServiceImpl extends ServiceImpl<KpAdminMapper, KpAdmin> impl
         return removeRoleByAdminId(adminId)
                 &
                 saveInRole(adminId, roleIds);
+    }
+
+    /**
+     * 检查登录帐号所在的店铺是否存在  如果不存在则抛出 ShopNotExistException
+     * @param loginName 登录帐号
+     */
+    @Override
+    public void checkAdminOfShopIsExist(String loginName) {
+        if (kpAdminMapper.checkAdminOfShopIsExist(loginName) == 0) {
+            throw new ShopNotExistException("登录的门店不存在");
+        }
     }
 
     private Boolean saveInRole(Integer adminId, Integer[] roleIds) {

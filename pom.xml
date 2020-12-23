@@ -14,6 +14,7 @@
         <module>his-view</module>
         <module>his-authority</module>
         <module>his-util</module>
+        <module>his-client</module>
     </modules>
     <properties>
         <!-- 声明属性，对 Spring 的版本进行统一管理 -->
@@ -105,6 +106,7 @@
                 <version>2.11.2</version>
             </dependency>
 
+
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
@@ -121,7 +123,20 @@
                 <artifactId>jstl</artifactId>
                 <version>1.2</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+
         </dependencies>
+
 
 
     </dependencyManagement>
