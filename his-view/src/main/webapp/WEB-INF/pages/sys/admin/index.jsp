@@ -235,7 +235,7 @@
                         layer.msg('登录帐号不允许少与6位');
                     } else if (data.adminPass.length < 6) {
                         layer.msg('登录密码不允许少与6位');
-                    } else if (!/1[3|5]\d{9}/.test(data.adminPhone)) {
+                    } else if (!/^1[3|5]\d{9}/.test(data.adminPhone)) {
                         layer.msg('手机号必须以13/15开头')
                     } else {
                         $.post('/admin/save', form.val('userBoxFilter'))
@@ -280,7 +280,7 @@
                         layer.msg('登录帐号不允许少与6位');
                     } else if (data.adminPass !== '' && data.adminPass.length < 6) {
                         layer.msg('登录密码不允许少与6位');
-                    } else if (data.adminPhone !== '' && !/1[3|5]\d{9}/.test(data.adminPhone)) {
+                    } else if (data.adminPhone !== '' && !/^1[3|5]\d{9}/.test(data.adminPhone)) {
                         layer.msg('手机号必须以13/15开头')
                     } else {
                         $.post('/admin/edit', data)

@@ -230,10 +230,12 @@
                     let data = form.val('clientAddBoxFilter');
                     if (data.clientIdNumber === '' || data.clientName === '' || data.clientPhone === '' || data.clientAddress === '') {
                         layer.msg('请填写完整的信息以后再次确认');
-                    } else if (!/1\d{16}[\d|x|X]/.test(data.clientIdNumber)) {
+                    } else if (!/^1\d{16}[\d|x|X]$/.test(data.clientIdNumber)) {
                         layer.msg("请输入正确的身份证");
-                    } else if (!/1[3|5]\d{9}/.test(data.clientPhone)) {
+                    } else if (!/^1[3|5]\d{9}/.test(data.clientPhone)) {
                         layer.msg('手机号必须以13/15开头')
+                    } else if(!/^(.+省.+市|北京市).+区$/.test(data.clientAddress)) {
+                        layer.msg('请输入正确的地址')
                     } else {
                         $.post('/client/save', data)
                             .done(function ({code, msg}) {
@@ -272,8 +274,10 @@
                     let data = form.val('clientEditBoxFilter');
                     if (data.clientName === '' || data.clientPhone === '' || data.clientAddress === '') {
                         layer.msg('请填写完整的信息以后再次确认');
-                    } else if (!/1[3|5]\d{9}/.test(data.clientPhone)) {
+                    } else if (!/^1[3|5]\d{9}/.test(data.clientPhone)) {
                         layer.msg('手机号必须以13/15开头')
+                    } else if(!/^(.+省.+市|北京市).+区$/.test(data.clientAddress)) {
+                        layer.msg('请输入正确的地址')
                     } else {
                         $.post('/client/edit', data)
                             .done(function ({code, msg}) {
