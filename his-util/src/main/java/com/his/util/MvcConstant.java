@@ -6,7 +6,7 @@ package com.his.util;
  *
  * @author yh
  */
-public class HisMvcConstant {
+public class MvcConstant {
     public static final String ATTR_MENU = "menu";
 
     public static final String ATTR_NAME_EXCEPTION = "exception";

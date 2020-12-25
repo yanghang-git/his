@@ -7,12 +7,12 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.his.util.HisMvcConstant" %>
+<%@ page import="com.his.util.MvcConstant" %>
 <div class="layui-side layui-bg-black">
     <div class="layui-side-scroll">
         <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
         <ul class="layui-nav layui-nav-tree">
-            <c:forEach items="${requestScope[HisMvcConstant.ATTR_MENU]}" var="menu">
+            <c:forEach items="${requestScope[MvcConstant.ATTR_MENU]}" var="menu">
                 <li class="layui-nav-item">
                         <a class="" href="javascript:;">${menu.key.permName}</a>
                     <dl class="layui-nav-child">

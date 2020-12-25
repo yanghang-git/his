@@ -3,7 +3,7 @@ package com.his.controller;
 import com.his.exception.ShopNotExistException;
 import com.his.service.KpAdminService;
 import com.his.service.KpPermissionService;
-import com.his.util.HisMvcConstant;
+import com.his.util.MvcConstant;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -55,8 +55,8 @@ public class KpLoginController {
     @RequestMapping("/index")
     public String doIndex(ModelMap modelMap) {
         Session sess = SecurityUtils.getSubject().getSession();
-        sess.setAttribute(HisMvcConstant.ATTR_MENU, kpPermissionService.searchMenuMap());
-        modelMap.addAttribute(HisMvcConstant.ATTR_MENU, sess.getAttribute(HisMvcConstant.ATTR_MENU));
+        sess.setAttribute(MvcConstant.ATTR_MENU, kpPermissionService.searchMenuMap());
+        modelMap.addAttribute(MvcConstant.ATTR_MENU, sess.getAttribute(MvcConstant.ATTR_MENU));
         return "index";
     }
 
@@ -64,7 +64,7 @@ public class KpLoginController {
     @ExceptionHandler(ShopNotExistException.class)
     public ModelAndView catchShopNotExistException(ShopNotExistException ex) {
         ModelAndView modelAndView = new ModelAndView()
-                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, ex.getMessage());
+                .addObject(MvcConstant.ATTR_NAME_EXCEPTION, ex.getMessage());
         modelAndView.setViewName("forward:/login.jsp");
         return modelAndView;
     }
@@ -73,7 +73,7 @@ public class KpLoginController {
     @ExceptionHandler(UnknownAccountException.class)
     public ModelAndView catchUnknownAccountException(UnknownAccountException ex) {
         ModelAndView modelAndView = new ModelAndView()
-                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, "帐号不存在");
+                .addObject(MvcConstant.ATTR_NAME_EXCEPTION, "帐号不存在");
         modelAndView.setViewName("forward:/login.jsp");
         return modelAndView;
     }
@@ -81,7 +81,7 @@ public class KpLoginController {
     @ExceptionHandler(IncorrectCredentialsException.class)
     public ModelAndView catchIncorrectCredentialsException(IncorrectCredentialsException ex) {
         ModelAndView modelAndView = new ModelAndView()
-                .addObject(HisMvcConstant.ATTR_NAME_EXCEPTION, "密码错误");
+                .addObject(MvcConstant.ATTR_NAME_EXCEPTION, "密码错误");
         modelAndView.setViewName("forward:/login.jsp");
         return modelAndView;
     }

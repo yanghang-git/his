@@ -1,6 +1,6 @@
 package com.his.mvc;
 
-import com.his.util.HisMvcConstant;
+import com.his.util.MvcConstant;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,7 +19,7 @@ public class ForwardController {
 
     @GetMapping("/to/{root}/{catalog}/{page}")
     public String forwardHandler(@PathVariable String root, @PathVariable String catalog, @PathVariable String page, ModelMap modelMap) {
-        modelMap.addAttribute(HisMvcConstant.ATTR_MENU, SecurityUtils.getSubject().getSession().getAttribute(HisMvcConstant.ATTR_MENU));
+        modelMap.addAttribute(MvcConstant.ATTR_MENU, SecurityUtils.getSubject().getSession().getAttribute(MvcConstant.ATTR_MENU));
         return root + "/" + catalog + "/" + page;
     }
 }
