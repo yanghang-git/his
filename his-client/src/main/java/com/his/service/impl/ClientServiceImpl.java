@@ -9,6 +9,8 @@ import com.his.service.ClientService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 /**
  * Description: TO DO
  * Date: 20-12-21
@@ -27,5 +29,14 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
         wrapper.like(!StringUtils.isEmpty(clientPhone), Client::getClientPhone, clientPhone);
         wrapper.like(!StringUtils.isEmpty(clientAddress), Client::getClientAddress, clientAddress);
         return page(page, wrapper);
+    }
+
+
+    @Override
+    public List<Client> getSizeListByClientIdNumber(String clientIdNumber, Integer size) {
+        LambdaQueryWrapper<Client> wrapper = new LambdaQueryWrapper<>();
+        Page<Client> page = new Page<>(1, size);
+        wrapper.likeRight(!StringUtils.isEmpty(clientIdNumber), Client::getClientIdNumber, clientIdNumber);
+        return page(page, wrapper).getRecords();
     }
 }

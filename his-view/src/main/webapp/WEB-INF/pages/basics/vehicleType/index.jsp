@@ -67,8 +67,6 @@
 <script>
     // 使用到 element 模块。 并不需要做操作 function() 可以忽略
     layui.use('element');
-
-
     layui.use('table', function(){
         let table = layui.table;
         table.render({
@@ -84,8 +82,6 @@
                 {toolbar: '#vehicleTypeTableToolb', title: '操作'}
             ]]
         });
-
-
         table.on('tool(vehicleTypeTableFilter)', function (obj) {
             switch (obj.event) {
                 case "edit":
@@ -96,7 +92,6 @@
                     break;
             }
         })
-
         table.on('toolbar(vehicleTypeTableFilter)', function (obj) {
             switch (obj.event) {
                 case "add":
@@ -107,10 +102,7 @@
                     break;
             }
         });
-
-
     })
-
     // 添加role
     function add() {
         layui.use(['jquery', 'form', 'layer', 'table'], function () {
@@ -178,7 +170,6 @@
             });
         })
     }
-
     // 删除role
     function remove(ids) {
         if (ids.length === 0) {
@@ -189,7 +180,6 @@
             let layer = layui.layer;
             let $ = layui.$;
             let table = layui.table;
-
             layer.confirm('你确定要删除吗?', {
                 icon: 3,
                 title: '提示',
@@ -214,16 +204,12 @@
             })
         });
     }
-
-
-
     //模糊查询
     document.getElementById('vehicleType-search').onclick = function(){
         layui.use('table', function(){
             layui.table.reload('vehicleTypeTableId', {where:{keyword: document.getElementsByName('keyword')[0].value}});
         });
     }
-
 </script>
 </body>
 </html>

@@ -28,6 +28,12 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @RequestMapping("getListByClientIdNumber")
+    public LayuiResult<List<Client>> getListByClientIdNumber(String clientIdNumber, Integer size) {
+        List<Client> userPage = clientService.getSizeListByClientIdNumber(clientIdNumber, size);
+        return LayuiResult.success(userPage);
+    }
+
     @RequiresPermissions("client:search")
     @RequestMapping("getPage")
     public LayuiResult<List<Client>> getPage(Integer page, Integer limit, String clientIdNumber, String clientName, String clientPhone, String clientAddress, Boolean clientSex) {

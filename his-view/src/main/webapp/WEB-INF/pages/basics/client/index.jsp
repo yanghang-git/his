@@ -335,7 +335,11 @@
         let $ = layui.$;
         let table = layui.table;
         $("#user-search").click(function () {
-            table.reload("clientTableId", {where: form.val("searchForm")})
+            let data = form.val("searchForm");
+            if (data['clientSex'] === undefined) {
+                data.clientSex = null;
+            }
+            table.reload("clientTableId", {where: data})
         });
     })
 

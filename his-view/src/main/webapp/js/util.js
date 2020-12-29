@@ -6,3 +6,19 @@ function getMapByArr(arr, key) {
     }
     return map;
 }
+
+function getMapKeys(map) {
+    let keys = [];
+    map.forEach((value, key) => {
+        keys.push(key);
+    });
+    return keys;
+}
+
+function getMapValues(map) {
+    let values = [];
+    map.forEach((value) => {
+        values.push(value);
+    });
+    return values;
+}

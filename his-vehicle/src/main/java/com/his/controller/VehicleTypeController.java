@@ -26,13 +26,21 @@ public class VehicleTypeController {
     // Request 请求  Mapping  映射
     @RequestMapping("searchPage")
     public LayuiResult<List<VehicleType>> searchPage(Integer page, Integer limit, String keyword){
-        Page<VehicleType> vehicleTypePage = vehicleTypeService.searchPageByKeyword(page, limit, keyword);
+        Page<VehicleType> vehicleTypePage = null;
+        try {
+            vehicleTypePage = vehicleTypeService.searchPageByKeyword(page, limit, keyword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return LayuiResult.success(vehicleTypePage);
     }
 
+    @RequestMapping("list")
+    public LayuiResult<List<VehicleType>> list(){
+        return LayuiResult.success(vehicleTypeService.list());
+    }
 
     // 添加
-
     @RequestMapping("add")
     public LayuiResult<?> add(VehicleType vehicleType){
         boolean flag = vehicleTypeService.save(vehicleType);

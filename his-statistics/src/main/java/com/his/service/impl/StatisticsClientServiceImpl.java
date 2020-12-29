@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 public class StatisticsClientServiceImpl implements StatisticsClientService {
 
-
     @Autowired
     private StatisticsClientMapper statisticsClientMapper;
 
