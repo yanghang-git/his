@@ -1,6 +1,7 @@
 package com.his.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.his.mapper.VehicleMapper;
@@ -8,6 +9,8 @@ import com.his.pojo.Vehicle;
 import com.his.service.VehicleService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Description: TO DO
@@ -41,5 +44,13 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle>  imp
         wrapper.like(!StringUtils.isEmpty(vehicleDesc), Vehicle::getVehicleDescribe, vehicleDesc);
         wrapper.like(!StringUtils.isEmpty(vehicleColor), Vehicle::getVehicleColor, vehicleColor);
         return page(page, wrapper);
+    }
+
+    @Override
+    public Boolean changeVehicleState(List<String> licensePlateNumberList, boolean state) {
+        LambdaUpdateWrapper<Vehicle> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(Vehicle::getVehicleState, state);
+        wrapper.in(licensePlateNumberList != null && licensePlateNumberList.size() > 0, Vehicle::getLicensePlateNumber, licensePlateNumberList);
+        return update(wrapper);
     }
 }

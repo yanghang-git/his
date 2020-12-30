@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 /**
  * Description: His登入及异常处理
  * Date: 20-12-11
@@ -59,7 +61,6 @@ public class KpLoginController {
         modelMap.addAttribute(MvcConstant.ATTR_MENU, sess.getAttribute(MvcConstant.ATTR_MENU));
         return "index";
     }
-
 
     @ExceptionHandler(ShopNotExistException.class)
     public ModelAndView catchShopNotExistException(ShopNotExistException ex) {

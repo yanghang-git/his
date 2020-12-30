@@ -1,7 +1,5 @@
 package com.his.util;
 
-import com.his.pojo.KpPermission;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +13,11 @@ public class LayuiTreeData {
 
     public LayuiTreeData() {}
 
-    public LayuiTreeData(KpPermission permission) {
-        this.title = permission.getPermName();
-        this.id = permission.getPermId();
+    public LayuiTreeData(Integer id, String title, String field) {
+        this.id = id;
+        this.title = title;
+        this.field = field;
         this.spread = true;
-        this.field = permission.getPermCode();
     }
 
     public String getTitle() {

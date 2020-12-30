@@ -177,7 +177,7 @@
                 {type: 'checkbox'},
                 {field: 'clientIdNumber', title: '身份证'},
                 {field: 'clientName', title: '姓名'},
-                {field: 'clientSex', title: '性别', templet: d => d.clientSex ? "男" : "女"},
+                {field: 'clientSex', title: '性别', templet: d => d.clientSex+"".length === 0 ? '未知' : d.clientSex ? "男" : "女"},
                 {field: 'clientPhone', title: '手机'},
                 {field: 'clientAddress', title: '地址'},
                 {field: 'createTime', title: '录入时间'},

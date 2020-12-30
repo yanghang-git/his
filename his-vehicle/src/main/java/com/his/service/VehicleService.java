@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.his.pojo.Vehicle;
 import com.his.pojo.VehicleType;
 
+import java.util.List;
+
 public interface VehicleService extends IService<Vehicle> {
     /**
      * 查找可以租借的车辆
@@ -17,4 +19,6 @@ public interface VehicleService extends IService<Vehicle> {
      * @return 查询到的车辆。 封装成一个Page 进行返回
      */
     Page<Vehicle> searchPageByKeyword(Integer current, Integer size,Integer shop, String licensePlateNumber, String vehicleColor, Integer vehicleType, String vehicleDesc, Double rentOutStart, Double rentOutEnd);
+
+    Boolean changeVehicleState(List<String> licensePlateNumberList, boolean state);
 }

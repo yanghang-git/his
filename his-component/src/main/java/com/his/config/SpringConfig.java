@@ -59,6 +59,7 @@ public class SpringConfig {
         sqlSessionFactoryBean.setDataSource(dataSource());
         sqlSessionFactoryBean.setConfigLocation(resolver().getResource("classpath:mybatis-config.xml"));
         sqlSessionFactoryBean.setMapperLocations(resolver().getResources("classpath:mapper/*.xml"));
+        sqlSessionFactoryBean.setTypeEnumsPackage("com.his.eunms");
         sqlSessionFactoryBean.setGlobalConfig(globalConfig());
         sqlSessionFactoryBean.setPlugins(mybatisPlusInterceptor());
         return sqlSessionFactoryBean;

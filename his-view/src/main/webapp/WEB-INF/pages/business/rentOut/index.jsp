@@ -47,7 +47,8 @@
     <div class="layui-body" style="background: #f2f2f2">
         <div class="layui-row" style="background: #fff; padding: 10px 30px">
             <span class="layui-breadcrumb">
-              <a><cite>HIS</cite></a>
+              <a href="index">HIS</a>
+              <a><cite>出租车辆</cite></a>
             </span>
         </div>
         <div style="background: #fff; margin: 15px; padding: 20px">
@@ -58,13 +59,13 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">车牌号</label>
                             <div class="layui-input-block">
-                                <input type="text" maxlength="7" name="licensePlateNumber" placeholder="请输入" class="layui-input">
+                                <input type="text" maxlength="7" autocomplete="off" name="licensePlateNumber" placeholder="请输入" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">车辆颜色</label>
                             <div class="layui-input-block">
-                                <input type="text" name="vehicleColor" placeholder="请输入" class="layui-input">
+                                <input type="text" autocomplete="off" name="vehicleColor" placeholder="请输入" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -97,11 +98,11 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">出租价格</label>
                             <div class="layui-input-inline" style="width: 78px;">
-                                <input type="text" name="rentOutStart" class="layui-input">
+                                <input type="text" autocomplete="off" name="rentOutStart" class="layui-input">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline" style="width: 78px;">
-                                <input type="text" name="rentOutEnd" class="layui-input">
+                                <input type="text" autocomplete="off" name="rentOutEnd" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline" style="margin-left: 30px">
@@ -135,13 +136,13 @@
             <div class="layui-inline">
                 <label class="layui-form-label">身份证</label>
                 <div class="layui-input-block" style="width: 183px">
-                    <input type="text" id="text-search" maxlength="18" name="clientIdNumber" placeholder="请输入" class="layui-input">
+                    <input type="text" id="text-search" autocomplete="off" maxlength="18" name="clientIdNumber" placeholder="请输入" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">姓名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="clientName" placeholder="请输入" class="layui-input">
+                    <input type="text" name="clientName" autocomplete="off" placeholder="请输入" class="layui-input">
                 </div>
             </div>
         </div>
@@ -149,13 +150,13 @@
             <div class="layui-inline">
                 <label class="layui-form-label">手机号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="clientPhone" maxlength="11" placeholder="请输入" class="layui-input">
+                    <input type="text" name="clientPhone" autocomplete="off" maxlength="11" placeholder="请输入" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">地址</label>
                 <div class="layui-input-block">
-                    <input type="text" name="clientAddress" placeholder="请输入" class="layui-input">
+                    <input type="text" name="clientAddress" autocomplete="off" placeholder="请输入" class="layui-input">
                 </div>
             </div>
         </div>
@@ -163,13 +164,13 @@
             <div class="layui-inline">
                 <label class="layui-form-label">起租时间</label>
                 <div class="layui-input-block">
-                    <input type="text" name="startDate" maxlength="19" id="startDate" class="layui-input">
+                    <input type="text" name="startDate" autocomplete="off" maxlength="19" id="startDate" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">还车时间</label>
                 <div class="layui-input-block">
-                    <input type="text" name="endDate" maxlength="19" id="endDate" class="layui-input">
+                    <input type="text" name="endDate" autocomplete="off" maxlength="19" id="endDate" class="layui-input">
                 </div>
             </div>
         </div>
@@ -177,7 +178,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block">
-                    <input type="text" name="comment" class="layui-input">
+                    <input type="text" name="comment" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -441,10 +442,29 @@
         });
     }
 
+    function applyBorrowRecord(licensePlateNumber, beBorrowCarShop, borrowCarShop) {
+        layui.use(['layer', 'jquery'], function() {
+            layer.confirm('你要申请调用车牌号为：' + licensePlateNumber + ' 的车辆吗?', {
+                icon: 3,
+                title: '提示',
+                btn: ['调用', '取消']
+            }, function(index) {
+                // 车牌号 licensePlateNumber
+                // 被借用门店号  shop
+                // 当前门店 currentShopId
+                layui.$.post('/vehicle/callRecord/add', {licensePlateNumber, beBorrowCarShop, borrowCarShop })
+                .done(function({code, msg}) {
+                    layer.msg(msg + (code > 0 ? ',目标门店收到借车请求。 待同意后重新查询再次添加即可' : ''));
+                });
+                layer.close(index);
+            })
+        })
+    }
+
     function rentOutListAdd(data, currentShopId) {
         layui.use('layer', () => {
             if (data.shop + "" !== currentShopId) {
-                layer.msg('非本们店车辆，无法租借。');
+                applyBorrowRecord(data.licensePlateNumber, data.shop, currentShopId);
             } else if (rentOutListMap.has(data.licensePlateNumber)) {
                 layer.msg('租借列表中以包含次车辆，无法添加')
             } else {
@@ -508,7 +528,6 @@
                                        rentOutTotalMoney(总租借价格),
                                        isPickUp(是否提车),
                                        comment(备注)
-
                                    }
                             */
                             let rentalDepositTotalMoney = document.getElementById('rentalDepositTotalMoney').value;
@@ -557,7 +576,7 @@
                             }
 
                             $.ajax({
-                                url: '/vehicle/test',
+                                url: '/orderForm/test',
                                 method: 'post',
                                 data: JSON.stringify(vo),
                                 contentType: 'application/json;charset=UTF-8',

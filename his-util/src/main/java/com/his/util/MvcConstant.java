@@ -10,4 +10,5 @@ public class MvcConstant {
     public static final String ATTR_MENU = "menu";
 
     public static final String ATTR_NAME_EXCEPTION = "exception";
+    public static final String ATTR_APPLYING_RECORD = "applyingRecord";
 }

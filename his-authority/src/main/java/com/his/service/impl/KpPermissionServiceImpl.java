@@ -103,9 +103,9 @@ public class KpPermissionServiceImpl extends ServiceImpl<KpPermissionMapper, KpP
         Map<Integer, LayuiTreeData> treeDataMap = new HashMap<>(list.size());
         list.forEach(perm -> {
             if (perm.getParentId() == null) {
-                treeDataMap.put(perm.getPermId(), new LayuiTreeData(perm));
+                treeDataMap.put(perm.getPermId(), new LayuiTreeData(perm.getPermId(), perm.getPermName(), perm.getPermCode()));
             } else {
-                treeDataMap.get(perm.getParentId()).addChildren(new LayuiTreeData(perm));
+                treeDataMap.get(perm.getParentId()).addChildren(new LayuiTreeData(perm.getPermId(), perm.getPermName(), perm.getPermCode()));
             }
         });
         return new ArrayList<>(treeDataMap.values());
@@ -133,7 +133,7 @@ public class KpPermissionServiceImpl extends ServiceImpl<KpPermissionMapper, KpP
             wrapper.eq(KpPermission::getParentId, permissionId);
         }
         List<LayuiTreeData> list = kpPermissionMapper.selectList(wrapper).stream()
-                .map(LayuiTreeData::new).collect(Collectors.toList());
+                .map(perm -> new  LayuiTreeData(perm.getPermId(), perm.getPermName(), perm.getPermCode())).collect(Collectors.toList());
 
         for (LayuiTreeData data : list) {
             List<LayuiTreeData> branch = searchPermTreeBranch(permissionIdList, data.getId());

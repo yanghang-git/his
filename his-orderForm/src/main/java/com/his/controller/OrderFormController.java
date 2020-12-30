@@ -1,7 +1,11 @@
 package com.his.controller;
 
+import com.his.exception.OrderFormSaveFailedException;
+import com.his.service.OrderFormService;
 import com.his.util.LayuiResult;
 import com.his.vo.RentOutVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,21 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
  * @author yh
  */
 @RestController
+@RequestMapping("/orderForm/")
 public class OrderFormController {
 
+    @Autowired
+    private OrderFormService orderFormService;
 
-    // client,
-    //                                    rentOut,
-    //                                    rentOutVehicleList,
-    //                                    isAdd,
-    //                                    isUpdate
     @RequestMapping("test")
     public LayuiResult<?> test(@RequestBody RentOutVo vo) {
-        System.out.println(vo);
-        return LayuiResult.success("sdf");
+        Boolean flag = orderFormService.addRentOutOrderForm(vo);
+        return flag ? LayuiResult.success("成功") : LayuiResult.failed("失败");
     }
 
-    public void test() {
-        return;
+    @ExceptionHandler(OrderFormSaveFailedException.class)
+    public LayuiResult<?> orderFormSaveFailedExceptionHandler(OrderFormSaveFailedException ex) {
+        return LayuiResult.failed(ex.getMessage());
     }
+
 }
