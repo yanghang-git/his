@@ -34,6 +34,11 @@ public class ClientController {
         return LayuiResult.success(userPage);
     }
 
+    @RequestMapping("list")
+    public LayuiResult<List<Client>> getListByClientIdNumber() {
+        List<Client> userPage = clientService.list();
+        return LayuiResult.success(userPage);
+    }
     @RequiresPermissions("client:search")
     @RequestMapping("getPage")
     public LayuiResult<List<Client>> getPage(Integer page, Integer limit, String clientIdNumber, String clientName, String clientPhone, String clientAddress, Boolean clientSex) {

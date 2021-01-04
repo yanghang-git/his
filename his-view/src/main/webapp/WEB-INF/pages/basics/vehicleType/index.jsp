@@ -170,40 +170,40 @@
             });
         })
     }
-    // 删除role
-    function remove(ids) {
-        if (ids.length === 0) {
-            layer.alert("请至少选中一条数据");
-            return;
-        }
-        layui.use(['layer', 'jquery', 'table'], function () {
-            let layer = layui.layer;
-            let $ = layui.$;
-            let table = layui.table;
-            layer.confirm('你确定要删除吗?', {
-                icon: 3,
-                title: '提示',
-                btn: ['删除', '取消']
-            }, function (index) {
-                $.ajax({
-                    url: '/vehicle/type/remove',
-                    method: 'post',
-                    data: {ids},
-                    traditional: true,
-                    success: function ({code, msg}) {
-                        if (code > 0) {
-                            table.reload('vehicleTypeTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+        // 删除role
+        function remove(ids) {
+            if (ids.length === 0) {
+                layer.alert("请至少选中一条数据");
+                return;
+            }
+            layui.use(['layer', 'jquery', 'table'], function () {
+                let layer = layui.layer;
+                let $ = layui.$;
+                let table = layui.table;
+                layer.confirm('你确定要删除吗?', {
+                    icon: 3,
+                    title: '提示',
+                    btn: ['删除', '取消']
+                }, function (index) {
+                    $.ajax({
+                        url: '/vehicle/type/remove',
+                        method: 'post',
+                        data: {ids},
+                        traditional: true,
+                        success: function ({code, msg}) {
+                            if (code > 0) {
+                                table.reload('vehicleTypeTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                            }
+                            layer.msg(msg);
+                        },
+                        error: function (resp) {
+                            layer.msg(resp.status + " " + resp.statusMessage);
                         }
-                        layer.msg(msg);
-                    },
-                    error: function (resp) {
-                        layer.msg(resp.status + " " + resp.statusMessage);
-                    }
+                    })
+                    layer.close(index);
                 })
-                layer.close(index);
-            })
-        });
-    }
+            });
+        }
     //模糊查询
     document.getElementById('vehicleType-search').onclick = function(){
         layui.use('table', function(){

@@ -1,10 +1,9 @@
 package com.his.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.exception.OrderFormSaveFailedException;
-import com.his.pojo.KpAdmin;
-import com.his.pojo.RentOutVehicle;
-import com.his.pojo.Vehicle;
+import com.his.pojo.*;
 import com.his.service.*;
 import com.his.util.Util;
 import com.his.vo.RentOutVo;
@@ -12,8 +11,10 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,12 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     @Autowired
     private VehicleService vehicleService;
+
+    @Autowired
+    private RentOutLogService rentOutLogService;
+
+    @Autowired
+    private VehicleTypeService vehicleTypeService;
 
     @Override
     @Transactional
@@ -68,6 +75,58 @@ public class OrderFormServiceImpl implements OrderFormService {
             throw new OrderFormSaveFailedException("添加订单失败");
         }
         return true;
+    }
+
+    @Override
+    public Page<RentOut> select(Integer current, Integer size, String clientName, String oddNumbers, String ofTheTimeStart, String ofTheTimeEnd) {
+        if (StringUtils.isEmpty(clientName)) {
+            return rentOutService.searchPageByKeyword(current, size, oddNumbers, null, ofTheTimeStart, ofTheTimeEnd);
+        } else {
+            List<String> clientIdByClientName = clientService.getClientIdByClientName(clientName);
+            if (clientIdByClientName == null || clientIdByClientName.size() == 0) {
+                return new Page<>(current, size);
+            }
+            return rentOutService.searchPageByKeyword(current, size, oddNumbers, clientIdByClientName, ofTheTimeStart, ofTheTimeEnd);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean cancelOrderForm(RentOut rentOut) {
+        KpAdmin admin  = (KpAdmin) SecurityUtils.getSubject().getPrincipal();
+        Client byId = clientService.getById(rentOut.getClientId());
+        LambdaQueryWrapper<RentOutVehicle> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RentOutVehicle::getOddNumbers, rentOut.getOddNumbers());
+        List<RentOutVehicle> list = rentOutVehicleService.list(wrapper);
+        ArrayList<RentOutLog> logList = new ArrayList<>();
+        RentOutLog rentOutLog = new RentOutLog();
+        rentOutLog.setLogNumbers(rentOut.getOddNumbers());
+        rentOutLog.setOfTheTime(rentOut.getOfTheTime());
+        rentOutLog.setPredictReturnTime(rentOut.getPredictReturnTime());
+        rentOutLog.setActualCollectionMoney(500);
+        rentOutLog.setClientName(byId.getClientName());
+        rentOutLog.setClientPhone(byId.getClientPhone());
+        rentOutLog.setClientSex(byId.getClientSex());
+        rentOutLog.setExistingProblem("退单");
+        rentOutLog.setCompensatePrice(0);
+        rentOutLog.setLogShop(admin.getAdminShop());
+        rentOutLog.setOperator(admin.getAdminName());
+        for (RentOutVehicle rent : list) {
+            try {
+                RentOutLog emp = (RentOutLog) rentOutLog.clone();
+                emp.setLicensePlateNumber(rent.getVehiclePlateNumber());
+                emp.setLicensePlateNumber(rent.getVehiclePlateNumber());
+                Vehicle vehicle = vehicleService.getById(rent.getVehiclePlateNumber());
+                emp.setVehicleDesc(vehicle.getVehicleDescribe());
+                emp.setVehicleType(vehicleTypeService.getById(vehicle.getVehicleType()).getTypeName());
+                logList.add(emp);
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }
+        boolean saveFlag = rentOutLogService.saveBatch(logList);
+        boolean removeFlag = rentOutService.removeById(rentOut.getOddNumbers());
+        return saveFlag && removeFlag;
     }
 
 

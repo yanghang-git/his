@@ -39,4 +39,9 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
         wrapper.likeRight(!StringUtils.isEmpty(clientIdNumber), Client::getClientIdNumber, clientIdNumber);
         return page(page, wrapper).getRecords();
     }
+
+    @Override
+    public List<String> getClientIdByClientName(String clientName) {
+        return null;
+    }
 }
