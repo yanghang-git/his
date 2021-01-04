@@ -207,7 +207,7 @@
     //模糊查询
     document.getElementById('vehicleType-search').onclick = function(){
         layui.use('table', function(){
-            layui.table.reload('vehicleTypeTableId', {where:{keyword: document.getElementsByName('keyword')[0].value}});
+            layui.table.reload('vehicleTypeTableId', {where:{keyword: document.getElementsByName('keyword')[0].value}, page:{curr: 1}});
         });
     }
 </script>

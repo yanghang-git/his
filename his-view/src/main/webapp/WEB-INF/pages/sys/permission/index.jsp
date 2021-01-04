@@ -359,7 +359,7 @@
         let $ = layui.$;
         let table = layui.table;
         $("#perm-search").click(function () {
-            table.reload("permTableId", {where: form.val("searchForm")})
+            table.reload("permTableId", {where: form.val("searchForm"), page:{curr: 1}})
         });
     })
 </script>

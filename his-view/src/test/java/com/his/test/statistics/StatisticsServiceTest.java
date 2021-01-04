@@ -1,15 +1,26 @@
 package com.his.test.statistics;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.his.config.SpringConfig;
 import com.his.echarts.entity.EchartsData;
+import com.his.pojo.RentOut;
+import com.his.pojo.RentOutLog;
+import com.his.service.RentOutLogService;
 import com.his.service.StatisticsClientService;
+import com.his.service.StatisticsRentOutLogService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.StringUtils;
 
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Description: TO DO
@@ -19,18 +30,17 @@ import java.util.Set;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SpringConfig.class)
-public class StatisticsClientServiceTest {
+public class StatisticsServiceTest {
 
     @Autowired
     private StatisticsClientService statisticsClientService;
 
+    @Autowired
+    private RentOutLogService rentOutLogService;
+
     @Test
     public void testSearchByAddressKeyword() {
-        Set<EchartsData> list = statisticsClientService.searchAddressByKeyword("河北省邯郸市");
-        for (EchartsData client : list) {
-            System.out.println();
-            System.out.println(client);
-            System.out.println();
-        }
+
+
     }
 }

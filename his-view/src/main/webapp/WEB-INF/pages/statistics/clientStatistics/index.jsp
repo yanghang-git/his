@@ -6,7 +6,6 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <jsp:include page="../../module/head.jsp"/>
@@ -24,7 +23,7 @@
             </span>
         </div>
 
-        <div class="layui-row">
+        <div class="layui-row" style="background: #fff; margin: 15px; padding: 20px">
             <div class="layui-col-md6 layui-form-item" style="margin-top: 50px">
                 <form>
                     <div class="layui-inline">
@@ -45,7 +44,7 @@
                 </form>
 
             </div>
-            <div class="layui-col-md6" id="main" style="width: 600px;height: 450px;margin-top: 20px"></div>
+            <div class="layui-col-md6" id="main" style="width: 600px;height: 425px;margin-top: 20px"></div>
         </div>
     </div>
 

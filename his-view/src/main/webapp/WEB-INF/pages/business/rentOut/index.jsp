@@ -105,9 +105,9 @@
                                 <input type="text" autocomplete="off" name="rentOutEnd" class="layui-input">
                             </div>
                         </div>
-                        <div class="layui-inline" style="margin-left: 30px">
+<%--                        <div class="layui-inline" style="margin-left: 30px">
                             <input type="checkbox" value="true" name="isAllShop" title="查看全部门店">
-                        </div>
+                        </div>--%>
                         <div class="layui-inline" style="margin-left: 200px;">
                             <button class="layui-btn layui-btn-normal" id="rentOutList-btn" type="button">
                                 <i class="layui-icon layui-icon-form"></i>租借列表<span class="layui-badge layui-bg-gray" id="rentOutListSize" style="display: none"></span>
@@ -360,6 +360,7 @@
         let table = layui.table;
         let currentShopId = document.getElementById('currentShopId').innerText;
         let vehicleTypeCache = new Map();
+        let shopCache = new Map();
         $.post('vehicle/type/list')
         .done(function({data}) {
             let $select = $('#vehicleTypeSelect');
@@ -419,7 +420,7 @@
             }
         })
     })
-
+    //
     function rentOutListRemove(licensePlateNumber) {
         let deleteRentalDepositMoney = rentOutListMap.get(licensePlateNumber).rentalDeposit;
         let deleteRentOutMoney = rentOutListMap.get(licensePlateNumber).rentOut * day;
@@ -549,7 +550,8 @@
                             for (let item of values) {
                                 rentOutVehicleList.push({
                                     'vehiclePlateNumber': item.licensePlateNumber,
-                                    'rentOutMoney': item.rentOutMoney
+                                    'rentOutMoney': item.rentOutMoney,
+                                    'rentalDeposit': item.rentalDeposit
                                 });
                             }
 
@@ -566,7 +568,7 @@
                                     'ofTheTime': data.startDate,
                                     'predictReturnTime': data.endDate,
                                     'clientId': data.clientIdNumber,
-                                    'rentOutTotalMoney': rentOutTotalMoney,
+                                    'rentOutTotalMoney': isPickUp ? rentOutTotalMoney : 500,
                                     'isPickUp': isPickUp,
                                     'comment': data.comment,
                                 },
@@ -574,7 +576,6 @@
                                 'isAdd': isAdd,
                                 'isUpdate' : isUpdate
                             }
-
                             $.ajax({
                                 url: '/orderForm/test',
                                 method: 'post',
@@ -584,7 +585,15 @@
                                     if (code > 0) {
                                         table.reload('rentOutTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
                                     }
-                                    layer.msg(msg);
+                                    if (isPickUp) {
+                                        layer.msg(msg);
+                                    } else {
+                                        layer.alert("预约成功， 请收押金500元。预约取车时间为：" + data.startDate);
+                                    }
+                                    rentOutListMap.clear();
+                                    rentOutListSize.style.display = 'none';
+                                    document.getElementById('rentOutTotalMoney').value = 0;
+                                    document.getElementById('rentalDepositTotalMoney').value = 0;
                                 },
                                 error: function (resp) {
                                     layer.msg(resp.status + " " + resp.statusMessage);
@@ -607,7 +616,7 @@
             if (data.isAllShop === undefined) {
                 data.isAllShop = null;
             }
-            layui.table.reload('rentOutTableId', {where: data})
+            layui.table.reload('rentOutTableId', {where: data, page:{curr: 1}})
         })
     }
 

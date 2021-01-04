@@ -234,7 +234,7 @@
         let table = layui.table;
 
         $("#role-search").click(function () {
-            table.reload("roleTableId", {where: form.val("searchForm")})
+            table.reload("roleTableId", {where: form.val("searchForm"), page:{curr: 1}})
         });
     })
 

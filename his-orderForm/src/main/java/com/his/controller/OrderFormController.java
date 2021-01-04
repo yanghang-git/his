@@ -33,8 +33,8 @@ public class OrderFormController {
 
 
 
-    @RequestMapping("test")
-    public LayuiResult<?> test(@RequestBody RentOutVo vo) {
+    @RequestMapping("addOrderForm")
+    public LayuiResult<?> addOrderForm(@RequestBody RentOutVo vo) {
         Boolean flag = orderFormService.addRentOutOrderForm(vo);
         return flag ? LayuiResult.success("成功") : LayuiResult.failed("失败");
     }
@@ -49,9 +49,7 @@ public class OrderFormController {
     // Request 请求  Mapping  映射
     @RequestMapping("searchPage")
     public LayuiResult<List<RentOut>> searchPage(Integer page, Integer limit, String clientName, String oddNumbers , String ofTheTimeStart, String ofTheTimeEnd){
-
         Page<RentOut> rentOut = orderFormService.select(page, limit, clientName, oddNumbers, ofTheTimeStart, ofTheTimeEnd);
-
         return LayuiResult.success(rentOut);
     }
 

@@ -26,12 +26,7 @@ public class VehicleTypeController {
     // Request 请求  Mapping  映射
     @RequestMapping("searchPage")
     public LayuiResult<List<VehicleType>> searchPage(Integer page, Integer limit, String keyword){
-        Page<VehicleType> vehicleTypePage = null;
-        try {
-            vehicleTypePage = vehicleTypeService.searchPageByKeyword(page, limit, keyword);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Page<VehicleType> vehicleTypePage = vehicleTypeService.searchPageByKeyword(page, limit, keyword);
         return LayuiResult.success(vehicleTypePage);
     }
 

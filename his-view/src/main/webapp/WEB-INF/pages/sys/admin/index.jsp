@@ -405,7 +405,7 @@
         let $ = layui.$;
         let table = layui.table;
         $("#user-search").click(function () {
-            table.reload("adminTableId", {where: form.val("searchForm")})
+            table.reload("adminTableId", {where: form.val("searchForm"), page:{curr: 1}})
         });
     })
 

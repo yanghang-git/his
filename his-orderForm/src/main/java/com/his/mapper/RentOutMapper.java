@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface RentOutMapper extends BaseMapper<RentOut> {
 
-    @Select("SELECT `odd_numbers` FROM `rent_out` WHERE `odd_numbers` LIKE CONCAT((SELECT DATE_FORMAT(NOW(), '%Y%m%d')), '%') ORDER BY SUBSTRING(`odd_numbers`, 9)+0 DESC LIMIT 1")
-    String getLastOddNumbers();
+        @Select("SELECT `odd_numbers` FROM `rent_out` WHERE `odd_numbers` LIKE CONCAT((SELECT DATE_FORMAT(NOW(), '%Y%m%d')), '%') ORDER BY SUBSTRING(`odd_numbers`, 9)+0 DESC LIMIT 1")
+        String getLastOddNumbers();
 
 }

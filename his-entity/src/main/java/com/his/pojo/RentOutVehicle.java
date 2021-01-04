@@ -8,13 +8,15 @@ public class RentOutVehicle implements Serializable {
   private String oddNumbers;
   private String vehiclePlateNumber;
   private Double rentOutMoney;
+  private Double rentalDeposit;
 
   public RentOutVehicle() {}
 
-  public RentOutVehicle(String oddNumbers, String vehiclePlateNumber, Double rentOutMoney) {
+  public RentOutVehicle(String oddNumbers, String vehiclePlateNumber, Double rentOutMoney, Double rentalDeposit) {
     this.oddNumbers = oddNumbers;
     this.vehiclePlateNumber = vehiclePlateNumber;
     this.rentOutMoney = rentOutMoney;
+    this.rentalDeposit = rentalDeposit;
   }
 
   public String getOddNumbers() {
@@ -41,12 +43,22 @@ public class RentOutVehicle implements Serializable {
     this.rentOutMoney = rentOutMoney;
   }
 
+  public Double getRentalDeposit() {
+    return rentalDeposit;
+  }
+
+  public void setRentalDeposit(Double rentalDeposit) {
+    this.rentalDeposit = rentalDeposit;
+  }
+
+
   @Override
   public String toString() {
     return "RentOutVehicle{" +
             "oddNumbers='" + oddNumbers + '\'' +
-            ", vehiclePlateNumber=" + vehiclePlateNumber +
+            ", vehiclePlateNumber='" + vehiclePlateNumber + '\'' +
             ", rentOutMoney=" + rentOutMoney +
+            ", rentalDeposit=" + rentalDeposit +
             '}';
   }
 }
