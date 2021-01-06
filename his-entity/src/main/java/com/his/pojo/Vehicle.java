@@ -1,5 +1,7 @@
 package com.his.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 public class Vehicle implements Serializable {
 
   private static final long serialVersionUID = -2282281600210912016L;
+  @TableId(type = IdType.INPUT)
   private String licensePlateNumber;
   private String vehicleIdNumber;
   private Integer vehicleType;

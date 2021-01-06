@@ -1,5 +1,7 @@
 package com.his.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 public class RentOut implements Serializable {
 
   private static final long serialVersionUID = -103408430438119117L;
+  @TableId(type = IdType.INPUT)
   private String oddNumbers;
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") 
@@ -21,6 +24,8 @@ public class RentOut implements Serializable {
   private Boolean isPickUp;
   private Integer rentOutShop;
   private Integer operator;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime generateTime;
   private String comment;
 

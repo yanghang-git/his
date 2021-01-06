@@ -1,6 +1,7 @@
 package com.his.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.exception.OrderFormSaveFailedException;
 import com.his.pojo.*;
@@ -15,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,9 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     @Autowired
     private VehicleTypeService vehicleTypeService;
+
+    @Autowired
+    private ShopService shopService;
 
     @Override
     @Transactional
@@ -78,15 +83,15 @@ public class OrderFormServiceImpl implements OrderFormService {
     }
 
     @Override
-    public Page<RentOut> select(Integer current, Integer size, String clientName, String oddNumbers, String ofTheTimeStart, String ofTheTimeEnd) {
+    public Page<RentOut> select(Integer current, Integer size, String clientName, String oddNumbers, String generateTimeStart, String generateTimeEnd) {
         if (StringUtils.isEmpty(clientName)) {
-            return rentOutService.searchPageByKeyword(current, size, oddNumbers, null, ofTheTimeStart, ofTheTimeEnd);
+            return rentOutService.searchPageByKeyword(current, size, oddNumbers, null, generateTimeStart, generateTimeEnd);
         } else {
             List<String> clientIdByClientName = clientService.getClientIdByClientName(clientName);
             if (clientIdByClientName == null || clientIdByClientName.size() == 0) {
                 return new Page<>(current, size);
             }
-            return rentOutService.searchPageByKeyword(current, size, oddNumbers, clientIdByClientName, ofTheTimeStart, ofTheTimeEnd);
+            return rentOutService.searchPageByKeyword(current, size, oddNumbers, clientIdByClientName, generateTimeStart, generateTimeEnd);
         }
     }
 
@@ -102,19 +107,20 @@ public class OrderFormServiceImpl implements OrderFormService {
         RentOutLog rentOutLog = new RentOutLog();
         rentOutLog.setLogNumbers(rentOut.getOddNumbers());
         rentOutLog.setOfTheTime(rentOut.getOfTheTime());
+        rentOutLog.setPredictRentOut(rentOut.getRentOutTotalMoney());
         rentOutLog.setPredictReturnTime(rentOut.getPredictReturnTime());
+        rentOutLog.setActualReturnTime(LocalDateTime.now());
         rentOutLog.setActualCollectionMoney(500);
         rentOutLog.setClientName(byId.getClientName());
         rentOutLog.setClientPhone(byId.getClientPhone());
         rentOutLog.setClientSex(byId.getClientSex());
         rentOutLog.setExistingProblem("退单");
         rentOutLog.setCompensatePrice(0);
-        rentOutLog.setLogShop(admin.getAdminShop());
+        rentOutLog.setLogShop(shopService.getShopNameById(admin.getAdminShop()));
         rentOutLog.setOperator(admin.getAdminName());
         for (RentOutVehicle rent : list) {
             try {
                 RentOutLog emp = (RentOutLog) rentOutLog.clone();
-                emp.setLicensePlateNumber(rent.getVehiclePlateNumber());
                 emp.setLicensePlateNumber(rent.getVehiclePlateNumber());
                 Vehicle vehicle = vehicleService.getById(rent.getVehiclePlateNumber());
                 emp.setVehicleDesc(vehicle.getVehicleDescribe());
@@ -129,6 +135,40 @@ public class OrderFormServiceImpl implements OrderFormService {
         return saveFlag && removeFlag;
     }
 
+    @Override
+    public boolean outVehicle(String oddNumbers) {
+        if (!StringUtils.isEmpty(oddNumbers)) {
+            Double totalRentOutMoney = getTotalRentOutMoneyByOddNumbers(oddNumbers);
+            LambdaUpdateWrapper<RentOut> wrapper = new LambdaUpdateWrapper<>();
+            wrapper.set(RentOut::getIsPickUp, true)
+                    .set(RentOut::getRentOutTotalMoney, totalRentOutMoney);
+            wrapper.eq(RentOut::getOddNumbers, oddNumbers);
+            return rentOutService.update(wrapper);
+        }
+        return false;
+    }
+
+    @Override
+    public List<RentOutVehicle> searchRentOutVehicleByRentOutOddNumbers(String oddNumbers) {
+        return rentOutVehicleService.searchRentOutVehicleByRentOutOddNumbers(oddNumbers);
+    }
+
+    @Override
+    public String searchVehicleDescByPrimaryKey(String primaryKey) {
+        return vehicleService.searchVehicleDescByPrimaryKey(primaryKey);
+    }
+
+    @Override
+    public Double getTotalRentOutMoneyByOddNumbers(String oddNumbers) {
+        return rentOutVehicleService.searchRentOutVehicleByRentOutOddNumbers(oddNumbers).stream().mapToDouble(RentOutVehicle::getRentOutMoney).sum();
+    }
+
+    @Override
+    public List<Vehicle> getVehicleListByOddNumbers(String oddNumbers) {
+        List<String> vehiclePlateNumber = rentOutVehicleService.getVehiclePlateNumberByOddNumbers(oddNumbers);
+        return vehicleService.listByIds(vehiclePlateNumber);
+    }
+
 
     /**
      * 检查车辆是否有已经被出租   如果有则报错(租借失败，并展示以出租的车辆) 由SpringMVC进行捕捉异常处理。
@@ -136,20 +176,6 @@ public class OrderFormServiceImpl implements OrderFormService {
      * @param shopId 车辆的的门店
      */
     private void checkOrderFormOfVehicleWhetherRent(List<String> vehicleList, Integer shopId) {
-        LambdaQueryWrapper<Vehicle> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Vehicle::getVehicleState, false);
-        wrapper.eq(Vehicle::getShop, shopId);
-        wrapper.in(Vehicle::getLicensePlateNumber, vehicleList);
-        List<Vehicle> list = vehicleService.list(wrapper);
-        if (list != null && list.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < list.size(); i++) {
-                sb.append(list.get(i).getLicensePlateNumber());
-                if (i != list.size() - 1)
-                    sb.append(" , ");
-
-            }
-            throw new OrderFormSaveFailedException("租借的车辆中[ " + sb + " ]已被出租，租借失败。");
-        }
+        vehicleService.checkOrderFormOfVehicleWhetherRent(vehicleList, shopId);
     }
 }

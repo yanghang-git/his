@@ -37,6 +37,22 @@
     #text-search+div>div:hover {
         background: #f2f2f2;
     }
+
+    @media print {
+        html,body {
+        //A4默认为210mm*287mm
+        width:210mm
+        height:297mm
+        }
+        .page{
+            font-size:10pt;
+            width:initial;
+        }
+        　@page {
+            size: A4;
+            margin: 1cm;
+        }
+    }
 </style>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -108,7 +124,7 @@
 <%--                        <div class="layui-inline" style="margin-left: 30px">
                             <input type="checkbox" value="true" name="isAllShop" title="查看全部门店">
                         </div>--%>
-                        <div class="layui-inline" style="margin-left: 200px;">
+                        <div class="layui-inline" style="margin-left: 390px;">
                             <button class="layui-btn layui-btn-normal" id="rentOutList-btn" type="button">
                                 <i class="layui-icon layui-icon-form"></i>租借列表<span class="layui-badge layui-bg-gray" id="rentOutListSize" style="display: none"></span>
                             </button>
@@ -200,6 +216,36 @@
 </div>
 
 <div style="display: none" id="currentShopId"><shiro:principal property="adminShop"/></div>
+
+
+<div class="page" id="contract" style="margin: 5px; padding-top: 20px; display: none;">
+    <h2 style="text-align: center">租车合同</h2>
+    <div style="padding: 15px">
+        <p>甲方（出租方）:<span style="text-decoration:underline">洲洲汽车租赁</span>，统一社会信用代：<span style="text-decoration:underline">92510113M123456789</span></p>
+        <p>乙方（承租放）:<span style="text-decoration:underline" id="clientName"></span>，身份证:<span id="clientIdNumber" style="text-decoration:underline"></span></p>
+        <p style="text-indent:2em">经双方协商达成以下协议</p>
+        <p style="text-indent:2em">一、出租方根据承租方需要，同意将：</p>
+        <div style="text-indent:6em" id="vehicle"></div>
+        <p style="text-indent:4em">租给承租方使用</p>
+        <p style="text-indent:2em">二、承租方负责对所租借的车辆进行维护保养，在退租时如给车辆设备造成损坏，承租方应负责修复原装或赔偿。因承租方造成损坏、违章、违法、交通事故、欠款等一切应由事宜由承租方自行承担看，出租方概不负责。</p>
+        <p style="text-indent:2em">三、租用期，自 <span id="rentOutStartDate" style="text-decoration:underline">yyyy-HH-mm</span> 起至 <span id="rentOutEndDate" style="text-decoration:underline">yyyy-HH-mm</span> 止，承租方如果继续使用或停用应提前向出租方提出协商。</p>
+        <p style="text-indent:2em">四、租金共计为：<span style="text-decoration:underline" id="totalMoney"></span>元，从合同生成时间起计，不足一天按一天收费。</p>
+        <p style="text-indent: 2em">五、所有燃料由承租方负责。</p>
+        <p style="text-indent: 2em">六、违约责任。出租方不得擅自将车辆调回，否则将按照租金的双倍赔偿承租方。承租方必须按照合同规定的时间和租金付款，否则，每逾期一天加罚一天的租金。</p>
+        <p style="text-indent: 2em">七、本合同一式两份，出租方、承租方各执一份。本协议自签字之时生效，事后如有纠纷，可通过法律途径解决。</p>
+        <div style="margin-top: 20px; text-indent: 2em" class="layui-row sign">
+            <div class="layui-col-md4">
+                甲方：<span style="margin-right:50px; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="layui-col-md4">
+                乙方：<span style="text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="layui-col-md4">
+                时间：<span style="text-decoration:underline" id="nowDate"></span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="js/util.js"></script>
 <script>
@@ -443,7 +489,7 @@
         });
     }
 
-    function applyBorrowRecord(licensePlateNumber, beBorrowCarShop, borrowCarShop) {
+/*    function applyBorrowRecord(licensePlateNumber, beBorrowCarShop, borrowCarShop) {
         layui.use(['layer', 'jquery'], function() {
             layer.confirm('你要申请调用车牌号为：' + licensePlateNumber + ' 的车辆吗?', {
                 icon: 3,
@@ -460,7 +506,7 @@
                 layer.close(index);
             })
         })
-    }
+    }*/
 
     function rentOutListAdd(data, currentShopId) {
         layui.use('layer', () => {
@@ -499,8 +545,8 @@
                 content: $('#rentOutListBox'),
                 btn: ['租借', '取消'],
                 btn1: (index) => {
-                    let data = form.val('rentOutForm');
                     let values = getMapValues(rentOutListMap);
+                    let data = form.val('rentOutForm');
                     if(values.length === 0) {
                         layer.msg('租借列表为空');
                     } else if (data.clientAddress === '' || data.clientIdNumber === '' || data.clientName === '' || data.clientPhone === '' || data.endDate === '' || data.startDate === '') {
@@ -516,21 +562,6 @@
                         if ((difftime / 86400) <= 0) {
                             layer.msg('请选择正确的租车时长');
                         } else {
-                            /*
-                               往后端传递的东西
-                                   isAdd(用户是否是添加)
-                                   isUpdate(用户是否是删除)
-                                   rentOutVehicleList(订单和车辆的集合 只有车辆和价格 没有订单号。 后台生成以后再次填充即可)
-                                   client(用户信息 身份证 手机 姓名 地址)
-                                   rentOut{
-                                       ofTheTime(租车日期),
-                                       predictReturnTime(预计还车日期),
-                                       clientId(客户Id),
-                                       rentOutTotalMoney(总租借价格),
-                                       isPickUp(是否提车),
-                                       comment(备注)
-                                   }
-                            */
                             let rentalDepositTotalMoney = document.getElementById('rentalDepositTotalMoney').value;
                             let rentOutTotalMoney = document.getElementById('rentOutTotalMoney').value;
                             let now = new Date();
@@ -547,7 +578,13 @@
                             } else {
                                 isAdd = true;
                             }
+                            let $vehicle = $('#vehicle').empty();
                             for (let item of values) {
+                                $vehicle.append(`<p>
+                                    <span style="text-decoration:underline">` + item.vehicleDescribe + `</span>，
+                                    车架号：<span style="text-decoration:underline">` + item.vehicleIdNumber + `</span>，
+                                    车牌号：<span style="text-decoration:underline">` + item.licensePlateNumber + `</span>
+                                </p>`);
                                 rentOutVehicleList.push({
                                     'vehiclePlateNumber': item.licensePlateNumber,
                                     'rentOutMoney': item.rentOutMoney,
@@ -576,8 +613,46 @@
                                 'isAdd': isAdd,
                                 'isUpdate' : isUpdate
                             }
+
+                            layer.close(index);
+                            let nowDate = new Date();
+                            $('#rentOutStartDate').text(data.startDate);
+                            $('#rentOutEndDate').text(data.endDate);
+                            $('#clientName').text(data.clientName);
+                            $('#clientIdNumber').text(data.clientIdNumber);
+                            $('#totalMoney').text(data.rentOutTotalMoney);
+                            $('#nowDate').text(nowDate.getFullYear() + "年" + (nowDate.getMonth() + 1) + "月" + nowDate.getDate() + "日");
+
+                            layer.open({
+                                type:1,
+                                title: '合同',
+                                area: ['595px', '600px'],
+                                content: $("#contract"),
+                                btn: ["打印"],
+                                btn1: function(index) {
+                                    document.body.innerHTML = document.getElementById("contract").innerHTML;//需要打印的页面
+                                    document.body.style.margin = "50px 30px 0";
+                                    let pTagName = document.body.getElementsByTagName("p");
+                                    for (let p of pTagName) {
+                                        p.style.margin = "10px 0";
+                                    }
+                                    let signClassName = document.body.getElementsByClassName('sign')[0];
+                                    signClassName.style.position = "absolute";
+                                    signClassName.style.bottom = "50px";
+                                    signClassName.style.right = "50px";
+                                    let divTagName = signClassName.getElementsByTagName("div");
+                                    for (let div of divTagName) {
+                                        div.style.margin = "10px 0";
+                                    }
+
+                                    window.print();
+                                    window.history.go(0);
+                                    layer.close(index);
+                                }
+                            });
+                            return;
                             $.ajax({
-                                url: '/orderForm/test',
+                                url: '/orderForm/addOrderForm',
                                 method: 'post',
                                 data: JSON.stringify(vo),
                                 contentType: 'application/json;charset=UTF-8',
@@ -591,7 +666,7 @@
                                         layer.alert("预约成功， 请收押金500元。预约取车时间为：" + data.startDate);
                                     }
                                     rentOutListMap.clear();
-                                    rentOutListSize.style.display = 'none';
+                                    document.getElementById('rentOutListSize').style.display = 'none';
                                     document.getElementById('rentOutTotalMoney').value = 0;
                                     document.getElementById('rentalDepositTotalMoney').value = 0;
                                 },
@@ -599,12 +674,13 @@
                                     layer.msg(resp.status + " " + resp.statusMessage);
                                 }
                             })
-                            layer.close(index);
                         }
 
                     }
                 }
             })
+
+
         })
     }
 

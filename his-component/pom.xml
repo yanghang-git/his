@@ -24,10 +24,9 @@
         </dependency>
         <dependency>
             <groupId>com.yh</groupId>
-            <artifactId>his-authority</artifactId>
+            <artifactId>his-SMS</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>

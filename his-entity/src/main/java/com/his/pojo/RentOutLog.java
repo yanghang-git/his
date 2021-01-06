@@ -20,7 +20,7 @@ public class RentOutLog implements Serializable, Cloneable {
   @JsonFormat(pattern = "yyyy-MM-dd mm:hh")
   @DateTimeFormat(pattern = "yyyy-MM-dd mm:hh")
   private LocalDateTime predictReturnTime;
-  private String predictRentOut;
+  private Double predictRentOut;
   @JsonFormat(pattern = "yyyy-MM-dd mm:hh")
   @DateTimeFormat(pattern = "yyyy-MM-dd mm:hh")
   private LocalDateTime actualReturnTime;
@@ -31,8 +31,8 @@ public class RentOutLog implements Serializable, Cloneable {
   private String clientPhone;
   private Boolean clientSex;
   private String existingProblem;
-  private Integer logShop;
-  private double compensatePrice;
+  private String logShop;
+  private Double compensatePrice;
   private String operator;
   private String vehicleDesc;
 
@@ -40,7 +40,7 @@ public class RentOutLog implements Serializable, Cloneable {
   }
 
 
-  public RentOutLog(String logNumbers, LocalDateTime ofTheTime, LocalDateTime predictReturnTime, String predictRentOut, LocalDateTime actualReturnTime, double actualCollectionMoney, String licensePlateNumber, String vehicleType, String clientName, String clientPhone, Boolean clientSex, String existingProblem, Integer logShop, double compensatePrice, String operator, String vehicleDesc) {
+  public RentOutLog(String logNumbers, LocalDateTime ofTheTime, LocalDateTime predictReturnTime, Double predictRentOut, LocalDateTime actualReturnTime, double actualCollectionMoney, String licensePlateNumber, String vehicleType, String clientName, String clientPhone, Boolean clientSex, String existingProblem, String logShop, double compensatePrice, String operator, String vehicleDesc) {
     this.logNumbers = logNumbers;
     this.ofTheTime = ofTheTime;
     this.predictReturnTime = predictReturnTime;
@@ -94,11 +94,11 @@ public class RentOutLog implements Serializable, Cloneable {
   }
 
 
-  public String getPredictRentOut() {
+  public Double getPredictRentOut() {
     return predictRentOut;
   }
 
-  public void setPredictRentOut(String predictRentOut) {
+  public void setPredictRentOut(Double predictRentOut) {
     this.predictRentOut = predictRentOut;
   }
 
@@ -170,11 +170,11 @@ public class RentOutLog implements Serializable, Cloneable {
     this.existingProblem = existingProblem;
   }
 
-  public Integer getLogShop() {
+  public String getLogShop() {
     return logShop;
   }
 
-  public void setLogShop(Integer logShop) {
+  public void setLogShop(String logShop) {
     this.logShop = logShop;
   }
 

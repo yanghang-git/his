@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.his.exception.OrderFormSaveFailedException;
 import com.his.mapper.VehicleMapper;
 import com.his.pojo.Vehicle;
 import com.his.service.VehicleService;
@@ -52,5 +53,29 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle>  imp
         wrapper.set(Vehicle::getVehicleState, state);
         wrapper.in(licensePlateNumberList != null && licensePlateNumberList.size() > 0, Vehicle::getLicensePlateNumber, licensePlateNumberList);
         return update(wrapper);
+    }
+
+    @Override
+    public void checkOrderFormOfVehicleWhetherRent(List<String> vehicleList, Integer shopId) {
+        LambdaQueryWrapper<Vehicle> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Vehicle::getVehicleState, false);
+        wrapper.eq(Vehicle::getShop, shopId);
+        wrapper.in(Vehicle::getLicensePlateNumber, vehicleList);
+        List<Vehicle> list = list(wrapper);
+        if (list != null && list.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                sb.append(list.get(i).getLicensePlateNumber());
+                if (i != list.size() - 1)
+                    sb.append(" , ");
+
+            }
+            throw new OrderFormSaveFailedException("租借的车辆中[ " + sb + " ]已被出租，租借失败。");
+        }
+    }
+
+    @Override
+    public String searchVehicleDescByPrimaryKey(String primaryKey) {
+        return getById(primaryKey).getVehicleDescribe();
     }
 }
