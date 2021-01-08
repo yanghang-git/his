@@ -114,7 +114,8 @@
     </div>
 </div>
 
-<div id="contract" style="margin: 5px; padding-top: 20px; display: none">
+
+<div class="page" id="contract" style="margin: 5px; padding-top: 20px; display: none;">
     <h2 style="text-align: center">租车合同</h2>
     <div style="padding: 15px">
         <p>甲方（出租方）:<span style="text-decoration:underline">洲洲汽车租赁</span>，统一社会信用代：<span style="text-decoration:underline">92510113M123456789</span></p>
@@ -129,7 +130,7 @@
         <p style="text-indent: 2em">五、所有燃料由承租方负责。</p>
         <p style="text-indent: 2em">六、违约责任。出租方不得擅自将车辆调回，否则将按照租金的双倍赔偿承租方。承租方必须按照合同规定的时间和租金付款，否则，每逾期一天加罚一天的租金。</p>
         <p style="text-indent: 2em">七、本合同一式两份，出租方、承租方各执一份。本协议自签字之时生效，事后如有纠纷，可通过法律途径解决。</p>
-        <div style="margin-top: 20px; text-indent: 2em" class="layui-row">
+        <div style="margin-top: 20px; text-indent: 2em" class="layui-row sign">
             <div class="layui-col-md4">
                 甲方：<span style="margin-right:50px; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
@@ -273,35 +274,56 @@
                     .done(function ({code, msg}) {
                         if (code > 0) {
                             layui.table.reload('rentOutTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                            let nowDate = new Date();
+                            $('#rentOutStartDate').text(data.ofTheTime);
+                            $('#rentOutEndDate').text(data.predictReturnTime);
+                            $('#clientName').text(adminCache.get(data.clientId).clientName);
+                            $('#clientIdNumber').text(data.clientId);
+                            $('#totalMoney').text(data.rentOutTotalMoney);
+                            $('#nowDate').text(nowDate.getFullYear() + "年" + (nowDate.getMonth() + 1) + "月" + nowDate.getDate() + "日");
+                            $.post('orderForm/searchVehicle', {oddNumbers: data.oddNumbers})
+                                .done(function({data}) {
+                                    let $vehicle = $('#vehicle').empty();
+                                    for (let item of data) {
+                                        $vehicle.append(`<p>
+                                    <span style="text-decoration:underline">` + item.vehicleDescribe + `</span>，
+                                    车架号：<span style="text-decoration:underline">` + item.vehicleIdNumber + `</span>，
+                                    车牌号：<span style="text-decoration:underline">` + item.licensePlateNumber + `</span>
+                                </p>`);
+                                    }
+                                })
+                            layer.open({
+                                type:1,
+                                title: '合同',
+                                area: ['595px', '600px'],
+                                content: $("#contract"),
+                                btn: ["打印"],
+                                btn1: function(index) {
+                                    document.body.innerHTML = document.getElementById("contract").innerHTML;//需要打印的页面
+                                    document.body.style.margin = "50px 30px 0";
+                                    let pTagName = document.body.getElementsByTagName("p");
+                                    for (let p of pTagName) {
+                                        p.style.margin = "10px 0";
+                                    }
+                                    let signClassName = document.body.getElementsByClassName('sign')[0];
+                                    signClassName.style.position = "absolute";
+                                    signClassName.style.bottom = "50px";
+                                    signClassName.style.right = "50px";
+                                    let divTagName = signClassName.getElementsByTagName("div");
+                                    for (let div of divTagName) {
+                                        div.style.margin = "10px 0";
+                                    }
+
+                                    window.print();
+                                    window.history.go(0);
+                                    layer.close(index);
+                                }
+                            });
                             layer.alert(msg);
                         } else {
                             layer.msg(msg);
                         }
                     });
-                let nowDate = new Date();
-                $('#rentOutStartDate').text(data.ofTheTime);
-                $('#rentOutEndDate').text(data.predictReturnTime);
-                $('#clientName').text(adminCache.get(data.clientId).clientName);
-                $('#clientIdNumber').text(data.clientId);
-                $('#totalMoney').text(data.rentOutTotalMoney);
-                $('#nowDate').text(nowDate.getFullYear() + "年" + (nowDate.getMonth() + 1) + "月" + nowDate.getDate() + "日");
-                $.post('orderForm/searchVehicle', {oddNumbers: data.oddNumbers})
-                .done(function({data}) {
-                    let $vehicle = $('#vehicle').empty();
-                    for (let item of data) {
-                        $vehicle.append(`<p>
-                                    <span style="text-decoration:underline">` + item.vehicleDescribe + `</span>，
-                                    车架号：<span style="text-decoration:underline">` + item.vehicleIdNumber + `</span>，
-                                    车牌号：<span style="text-decoration:underline">` + item.licensePlateNumber + `</span>
-                                </p>`);
-                    }
-                })
-                layer.open({
-                    type:1,
-                    title: '合同',
-                    area: ['595px', '600px'],
-                    content: $("#contract")
-                });
             }
         })
     }

@@ -613,44 +613,6 @@
                                 'isAdd': isAdd,
                                 'isUpdate' : isUpdate
                             }
-
-                            layer.close(index);
-                            let nowDate = new Date();
-                            $('#rentOutStartDate').text(data.startDate);
-                            $('#rentOutEndDate').text(data.endDate);
-                            $('#clientName').text(data.clientName);
-                            $('#clientIdNumber').text(data.clientIdNumber);
-                            $('#totalMoney').text(data.rentOutTotalMoney);
-                            $('#nowDate').text(nowDate.getFullYear() + "年" + (nowDate.getMonth() + 1) + "月" + nowDate.getDate() + "日");
-
-                            layer.open({
-                                type:1,
-                                title: '合同',
-                                area: ['595px', '600px'],
-                                content: $("#contract"),
-                                btn: ["打印"],
-                                btn1: function(index) {
-                                    document.body.innerHTML = document.getElementById("contract").innerHTML;//需要打印的页面
-                                    document.body.style.margin = "50px 30px 0";
-                                    let pTagName = document.body.getElementsByTagName("p");
-                                    for (let p of pTagName) {
-                                        p.style.margin = "10px 0";
-                                    }
-                                    let signClassName = document.body.getElementsByClassName('sign')[0];
-                                    signClassName.style.position = "absolute";
-                                    signClassName.style.bottom = "50px";
-                                    signClassName.style.right = "50px";
-                                    let divTagName = signClassName.getElementsByTagName("div");
-                                    for (let div of divTagName) {
-                                        div.style.margin = "10px 0";
-                                    }
-
-                                    window.print();
-                                    window.history.go(0);
-                                    layer.close(index);
-                                }
-                            });
-                            return;
                             $.ajax({
                                 url: '/orderForm/addOrderForm',
                                 method: 'post',
@@ -662,6 +624,41 @@
                                     }
                                     if (isPickUp) {
                                         layer.msg(msg);
+                                        let nowDate = new Date();
+                                        $('#rentOutStartDate').text(data.startDate);
+                                        $('#rentOutEndDate').text(data.endDate);
+                                        $('#clientName').text(data.clientName);
+                                        $('#clientIdNumber').text(data.clientIdNumber);
+                                        $('#totalMoney').text(data.rentOutTotalMoney);
+                                        $('#nowDate').text(nowDate.getFullYear() + "年" + (nowDate.getMonth() + 1) + "月" + nowDate.getDate() + "日");
+
+                                        layer.open({
+                                            type:1,
+                                            title: '合同',
+                                            area: ['595px', '600px'],
+                                            content: $("#contract"),
+                                            btn: ["打印"],
+                                            btn1: function(index) {
+                                                document.body.innerHTML = document.getElementById("contract").innerHTML;//需要打印的页面
+                                                document.body.style.margin = "50px 30px 0";
+                                                let pTagName = document.body.getElementsByTagName("p");
+                                                for (let p of pTagName) {
+                                                    p.style.margin = "10px 0";
+                                                }
+                                                let signClassName = document.body.getElementsByClassName('sign')[0];
+                                                signClassName.style.position = "absolute";
+                                                signClassName.style.bottom = "50px";
+                                                signClassName.style.right = "50px";
+                                                let divTagName = signClassName.getElementsByTagName("div");
+                                                for (let div of divTagName) {
+                                                    div.style.margin = "10px 0";
+                                                }
+
+                                                window.print();
+                                                window.history.go(0);
+                                                layer.close(index);
+                                            }
+                                        });
                                     } else {
                                         layer.alert("预约成功， 请收押金500元。预约取车时间为：" + data.startDate);
                                     }
@@ -669,9 +666,11 @@
                                     document.getElementById('rentOutListSize').style.display = 'none';
                                     document.getElementById('rentOutTotalMoney').value = 0;
                                     document.getElementById('rentalDepositTotalMoney').value = 0;
+                                    layer.close(index);
                                 },
                                 error: function (resp) {
                                     layer.msg(resp.status + " " + resp.statusMessage);
+                                    layer.close(index);
                                 }
                             })
                         }
