@@ -21,8 +21,4 @@ public interface VehicleService extends IService<Vehicle> {
     Page<Vehicle> searchPageByKeyword(Integer current, Integer size,Integer shop, String licensePlateNumber, String vehicleColor, Integer vehicleType, String vehicleDesc, Double rentOutStart, Double rentOutEnd);
 
     Boolean changeVehicleState(List<String> licensePlateNumberList, boolean state);
-
-    void checkOrderFormOfVehicleWhetherRent(List<String> vehicleList, Integer shopId);
-
-    String searchVehicleDescByPrimaryKey(String primaryKey);
 }

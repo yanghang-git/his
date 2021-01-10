@@ -13,7 +13,4 @@ import java.util.List;
  * @author yh
  */
 public interface RentOutVehicleService extends IService<RentOutVehicle> {
-    List<RentOutVehicle> searchRentOutVehicleByRentOutOddNumbers(String oddNumbers);
-
-    List<String> getVehiclePlateNumberByOddNumbers(String oddNumbers);
 }

@@ -18,7 +18,6 @@
         <module>his-statistics</module>
         <module>his-vehicle</module>
         <module>his-orderForm</module>
-        <module>his-SMS</module>
     </modules>
     <properties>
         <!-- 声明属性，对 Spring 的版本进行统一管理 -->

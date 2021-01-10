@@ -3,9 +3,9 @@ package com.his.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.exception.OrderFormSaveFailedException;
 import com.his.pojo.RentOut;
-import com.his.pojo.RentOutVehicle;
-import com.his.pojo.Vehicle;
+import com.his.pojo.VehicleType;
 import com.his.service.OrderFormService;
+import com.his.service.VehicleTypeService;
 import com.his.util.LayuiResult;
 import com.his.vo.RentOutVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,20 +31,17 @@ public class OrderFormController {
     private OrderFormService orderFormService;
 
 
+
+
     @RequestMapping("addOrderForm")
     public LayuiResult<?> addOrderForm(@RequestBody RentOutVo vo) {
         Boolean flag = orderFormService.addRentOutOrderForm(vo);
         return flag ? LayuiResult.success("成功") : LayuiResult.failed("失败");
     }
 
-    @RequestMapping("searchRentOutVehicle")
-    public LayuiResult<List<RentOutVehicle>> searchRentOutVehicle(String oddNumbers) {
-        return LayuiResult.success(orderFormService.searchRentOutVehicleByRentOutOddNumbers(oddNumbers));
-    }
-
-    @RequestMapping("searchVehicleDesc")
-    public LayuiResult<?> searchVehicleDesc(String vehiclePlateNumber) {
-        return LayuiResult.success(orderFormService.searchVehicleDescByPrimaryKey(vehiclePlateNumber));
+    @ExceptionHandler(OrderFormSaveFailedException.class)
+    public LayuiResult<?> orderFormSaveFailedExceptionHandler(OrderFormSaveFailedException ex) {
+        return LayuiResult.failed(ex.getMessage());
     }
 
 
@@ -56,31 +54,20 @@ public class OrderFormController {
     }
 
     // 删除
-    @RequestMapping("cancel")
-    public LayuiResult<?> cancelOrderForm(RentOut rentOut) {
+    @RequestMapping("remove")
+    public LayuiResult<?> remove(RentOut rentOut) {
+
         boolean flag = orderFormService.cancelOrderForm(rentOut);
         return flag ? LayuiResult.success("取消成功") : LayuiResult.failed("取消失败");
     }
 
-    @RequestMapping("outVehicle")
-    public LayuiResult<?> outVehicle(String oddNumbers) {
-        boolean flag = orderFormService.outVehicle(oddNumbers);
-        Double totalRentOutMoney = orderFormService.getTotalRentOutMoneyByOddNumbers(oddNumbers);
-        return flag ? LayuiResult.success("出车成功，总租金" + totalRentOutMoney + "元。请收款" + (totalRentOutMoney - 500) + "元，已收押金500元。") : LayuiResult.failed("出车失败");
+    // 修改
+    @RequestMapping("update")
+    public LayuiResult<?> update(RentOut rentOut){
+
+        boolean flag = orderFormService.update(rentOut);
+        return flag ? LayuiResult.success("出车成功") : LayuiResult.failed("出车异常");
     }
-
-
-    @RequestMapping("searchVehicle")
-    public LayuiResult<List<Vehicle>> getVehicleList(String oddNumbers) {
-        return LayuiResult.success(orderFormService.getVehicleListByOddNumbers(oddNumbers));
-    }
-
-
-    @ExceptionHandler(OrderFormSaveFailedException.class)
-    public LayuiResult<?> orderFormSaveFailedExceptionHandler(OrderFormSaveFailedException ex) {
-        return LayuiResult.failed(ex.getMessage());
-    }
-
 
 
 }
