@@ -44,7 +44,7 @@
         </div>
     <div class="layui-footer" style="background: #fff">
         <!-- 底部固定区域 -->
-        © his.com - HIS医院
+        © his.com - 高端汽车管理系统
     </div>
 </div>
 <script src="webjars/echarts/4.9.0/echarts.min.js"></script>

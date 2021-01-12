@@ -52,5 +52,5 @@ public class RentOutServiceImpl extends ServiceImpl<RentOutMapper, RentOut> impl
         wrapper.ge(!StringUtils.isEmpty(generateTimeStart) ,RentOut::getGenerateTime ,generateTimeStart);
         wrapper.le(!StringUtils.isEmpty(generateTimeEnd) , RentOut::getGenerateTime , generateTimeEnd);
         return page(page, wrapper);
-    }
+    }   
 }

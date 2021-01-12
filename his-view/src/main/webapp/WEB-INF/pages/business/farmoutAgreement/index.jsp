@@ -65,7 +65,7 @@
 
     <div class="layui-footer" style="background: #fff">
         <!-- 底部固定区域 -->
-        © his.com - YSZ
+        © his.com - 高端汽车管理系统
     </div>
 </div>
 

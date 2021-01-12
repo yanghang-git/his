@@ -21,13 +21,21 @@
               <a><cite>HIS</cite></a>
             </span>
         </div>
-    </div>
 
+        <div>
+           <div>
+
+               <img src="https://s3.ax1x.com/2021/01/12/sJoADH.jpg" width="100%" height="612">
+           </div>
+        </div>
+
+
+    </div>
 
 
     <div class="layui-footer" style="background: #fff">
         <!-- 底部固定区域 -->
-        © his.com - HIS医院
+        © his.com - 高端汽车管理系统
     </div>
 </div>
 <script>

@@ -44,9 +44,7 @@
         </div>
         </form>
     </div>
-<div>
-    <p>如有问题请联系</p>
-</div>
+
 
 </div>
 </body>
