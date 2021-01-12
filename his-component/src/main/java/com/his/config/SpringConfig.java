@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author yh
  */
 @MapperScan(basePackages = "com.his.mapper")
-@ComponentScan(basePackages = {"com.his.service", "com.his.config.etc"})
+@ComponentScan(basePackages = {"com.his.service", "com.his.config.etc", "com.his.task"})
 @PropertySource("classpath:jdbc.properties")
 @Configuration
 @EnableTransactionManagement

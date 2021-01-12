@@ -12,4 +12,8 @@ import com.his.pojo.Shop;
  */
 public interface ShopService extends IService<Shop> {
     Page<Shop> searchPage(Integer current, Integer size, String keyword);
+
+    String getShopNameById(Integer adminShop);
+
+    String getCurrentShopName();
 }

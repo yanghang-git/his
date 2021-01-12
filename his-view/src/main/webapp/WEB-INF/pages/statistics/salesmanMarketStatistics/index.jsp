@@ -85,8 +85,8 @@
                 {field: 'logNumbers', title: '订单编号',width: '140' },
                 {field: 'ofTheTime' ,title: '起租时间' ,width: '145'},
                 {field: 'predictReturnTime' ,title: '预计还车时间' ,width: '145'},
-                {field: 'predictRentOut',title: '预收款',width: '87'},
                 {field: 'actualReturnTime' ,title: '实际还车时间' ,width: '150'},
+                {field: 'predictRentOut',title: '预收款',width: '87'},
                 {field: 'actualCollectionMoney',title: '实收款',width: '87'},
                 {field: 'licensePlateNumber',title: '车牌号',width: '87'},
                 {field: 'vehicleType',title: '车辆类型',width: '87'},
@@ -96,7 +96,6 @@
                 {field: 'clientSex' ,title: '性别',width:'68' ,templet:d => d.clientSex ? '男' : '女',},
                 {field: 'existingProblem',title: '问题简介',width: '100'},
                 {field: 'compensatePrice',title: '问题金额',width: '87'},
-                {field: 'logShop',title: '门店',width: '87'},
                 {field: 'operator',title: '操作者',width: '87'},
                 // {field: 'clientId' ,title: '客户姓名',width:'120' , templet: d => adminCache.has(d.clientId) ? adminCache.get(d.clientId) : ""},
             ]]
