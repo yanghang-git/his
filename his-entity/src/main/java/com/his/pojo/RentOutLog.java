@@ -13,27 +13,43 @@ public class RentOutLog implements Serializable, Cloneable {
   private static final long serialVersionUID = 2364877692974204517L;
 
   @TableId(type = IdType.INPUT)
+  //出租单号
   private String logNumbers;
-  @JsonFormat(pattern = "yyyy-MM-dd mm:hh")
-  @DateTimeFormat(pattern = "yyyy-MM-dd mm:hh")
+  //起租时间
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime ofTheTime;
-  @JsonFormat(pattern = "yyyy-MM-dd mm:hh")
-  @DateTimeFormat(pattern = "yyyy-MM-dd mm:hh")
+  //预计还车时间
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime predictReturnTime;
+  //预计出租价格
   private Double predictRentOut;
-  @JsonFormat(pattern = "yyyy-MM-dd mm:hh")
-  @DateTimeFormat(pattern = "yyyy-MM-dd mm:hh")
+  //实际还车时间
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime actualReturnTime;
+  //实际收款价格
   private double actualCollectionMoney;
+  //车牌号
   private String licensePlateNumber;
+  //车辆类型
   private String vehicleType;
+  //客户姓名
   private String clientName;
+  //客户电话
   private String clientPhone;
+  //客户性别
   private Boolean clientSex;
+  //问题简介
   private String existingProblem;
+  //标明那个门店的出租订单
   private String logShop;
+  //问题金额
   private Double compensatePrice;
+  //操作者
   private String operator;
+  //车辆描述
   private String vehicleDesc;
 
   public RentOutLog() {

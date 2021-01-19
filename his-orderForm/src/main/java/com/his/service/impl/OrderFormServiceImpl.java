@@ -3,6 +3,7 @@ package com.his.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.his.exception.OrderFormCancelFailedException;
 import com.his.exception.OrderFormSaveFailedException;
 import com.his.pojo.*;
 import com.his.service.*;
@@ -16,7 +17,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +55,8 @@ public class OrderFormServiceImpl implements OrderFormService {
     @Transactional
     public Boolean addRentOutOrderForm(RentOutVo vo) {
         KpAdmin admin = (KpAdmin) SecurityUtils.getSubject().getPrincipal();
-        List<String> getRentOutVehicleLicensePlateNumber = vo.getRentOutVehicleList().stream().map(RentOutVehicle::getVehiclePlateNumber).collect(Collectors.toList());
+        List<String> getRentOutVehicleLicensePlateNumber =
+                vo.getRentOutVehicleList().stream().map(RentOutVehicle::getVehiclePlateNumber).collect(Collectors.toList());
         checkOrderFormOfVehicleWhetherRent(getRentOutVehicleLicensePlateNumber, admin.getAdminShop());
         // 设置操作车 为 登录用户的Id
         vo.getRentOut().setOperator(admin.getAdminId());
@@ -65,11 +66,13 @@ public class OrderFormServiceImpl implements OrderFormService {
         vo.getRentOut().setGenerateTime(LocalDateTime.now());
         if (vo.getIsAdd()) {
             vo.getClient().setCreateTime(LocalDateTime.now());
+            vo.getClient().setClientSex(true);
             clientService.save(vo.getClient());
         } else if (vo.getIsUpdate()) {
             clientService.updateById(vo.getClient());
         }
-        String oddNumbers = Util.generateOrderFormId(rentOutService.getLastOddNumbers());
+        String formId = Util.compareFormId(rentOutService.getLastOddNumbers(), rentOutLogService.getLastOddNumbers());
+        String oddNumbers = Util.generateOrderFormId(formId);
         vo.getRentOut().setOddNumbers(oddNumbers);
         boolean saveRentOutMark = rentOutService.save(vo.getRentOut());
         vo.setRentOutVehicleList(vo.getRentOutVehicleList().stream().peek(item -> item.setOddNumbers(oddNumbers)).collect(Collectors.toList()));
@@ -96,6 +99,18 @@ public class OrderFormServiceImpl implements OrderFormService {
     }
 
     @Override
+    public Page<RentOut> select1(Integer current, Integer size, String oddNumbers, String clientName,Integer adminShop,Integer isPickUp) {
+        if (StringUtils.isEmpty(clientName)) {
+            return rentOutService.searchPageByOddNumbersAndClientIdNumbser(current, size, oddNumbers, null,adminShop,isPickUp);
+        } else {
+            List<String> clientIdByClientName = clientService.getClientIdNumberByClientName(clientName);
+            if (clientIdByClientName == null || clientIdByClientName.size() == 0) {
+                return new Page<>(current, size);
+            }
+            return rentOutService.searchPageByOddNumbersAndClientIdNumbser(current, size, oddNumbers, clientIdByClientName,adminShop,isPickUp);
+        }
+    }
+    @Override
     @Transactional
     public boolean cancelOrderForm(RentOut rentOut) {
         KpAdmin admin  = (KpAdmin) SecurityUtils.getSubject().getPrincipal();
@@ -103,6 +118,7 @@ public class OrderFormServiceImpl implements OrderFormService {
         LambdaQueryWrapper<RentOutVehicle> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RentOutVehicle::getOddNumbers, rentOut.getOddNumbers());
         List<RentOutVehicle> list = rentOutVehicleService.list(wrapper);
+        List<String> rentOutVehicleOddNumbers = list.stream().map(RentOutVehicle::getVehiclePlateNumber).collect(Collectors.toList());
         ArrayList<RentOutLog> logList = new ArrayList<>();
         RentOutLog rentOutLog = new RentOutLog();
         rentOutLog.setLogNumbers(rentOut.getOddNumbers());
@@ -132,7 +148,16 @@ public class OrderFormServiceImpl implements OrderFormService {
         }
         boolean saveFlag = rentOutLogService.saveBatch(logList);
         boolean removeFlag = rentOutService.removeById(rentOut.getOddNumbers());
-        return saveFlag && removeFlag;
+        boolean changeVehicleStatueFlag = vehicleService.changeVehicleState(rentOutVehicleOddNumbers, true);
+        if (!saveFlag) {
+            throw new OrderFormCancelFailedException("renOutLogSaveFailed");
+        } else if (!removeFlag) {
+            throw new OrderFormCancelFailedException("removeRentOutFailed");
+        } else if (!changeVehicleStatueFlag) {
+            throw new OrderFormCancelFailedException("changeVehicleStatueFailed");
+        } else {
+            return true;
+        }
     }
 
     @Override

@@ -19,4 +19,7 @@ public interface ClientService extends IService<Client> {
     List<Client> getSizeListByClientIdNumber(String clientIdNumber, Integer size);
 
     List<String> getClientIdByClientName(String clientName);
+
+    List<String> getClientIdNumberByClientName(String clientName);
+
 }

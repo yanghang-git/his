@@ -9,7 +9,9 @@ import com.his.service.ClientService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Description: TO DO
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @Service
 public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> implements ClientService {
+
     @Override
     public Page<Client> searchPage(Integer current, Integer size, String clientIdNumber, String clientName, String clientPhone, String clientAddress, Boolean clientSex) {
         Page<Client> page = new Page<>(current,size);
@@ -43,5 +46,16 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
     @Override
     public List<String> getClientIdByClientName(String clientName) {
         return null;
+    }
+
+    @Override
+    public List<String> getClientIdNumberByClientName(String clientName) {
+        if (StringUtils.isEmpty(clientName)) {
+            return null;
+        } else {
+            LambdaQueryWrapper<Client> wrapper = new LambdaQueryWrapper<>();
+            wrapper.like(Client::getClientName, clientName);
+            return list(wrapper).stream().map(Client::getClientIdNumber).collect(Collectors.toList());
+        }
     }
 }

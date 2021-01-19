@@ -21,6 +21,8 @@ public interface OrderFormService {
 
     Page<RentOut> select(Integer page, Integer limit, String clientName, String oddNumbers , String generateTimeStart, String generateTimeEnd);
 
+    Page<RentOut> select1(Integer page, Integer limit, String oddNumbers, String clientId , Integer adminShop,Integer isPickUp);
+
     boolean cancelOrderForm(RentOut rentOut);
 
     boolean outVehicle(String oddNumbers);

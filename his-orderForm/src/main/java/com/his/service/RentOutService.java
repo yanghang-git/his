@@ -25,4 +25,6 @@ public interface RentOutService extends IService<RentOut> {
      */
     Page<RentOut> searchPageByKeyword(Integer current, Integer size, String oddNumbers, List<String> clientIdNumberList, String generateTimeStart, String generateTimeEnd);
 
+    Page<RentOut> searchPageByOddNumbersAndClientIdNumbser(Integer current, Integer size, String oddNumbers, List<String> clientList,Integer adminShop,Integer isPickUp);
+
 }

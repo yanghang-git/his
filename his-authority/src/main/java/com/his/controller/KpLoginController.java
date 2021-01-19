@@ -1,6 +1,7 @@
 package com.his.controller;
 
 import com.his.exception.ShopNotExistException;
+import com.his.pojo.KpAdmin;
 import com.his.service.KpAdminService;
 import com.his.service.KpPermissionService;
 import com.his.util.MvcConstant;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
+import java.io.Console;
 import java.util.List;
 
 /**

@@ -22,6 +22,17 @@ public class Util {
         return accept != null && accept.contains("application/json") || xWith != null && xWith.equals("XMLHttpRequest");
     }
 
+    public static String compareFormId(String idOne, String idTwo) {
+        if (StringUtils.isEmpty(idOne)) {
+            return idTwo;
+        } else if (StringUtils.isEmpty(idTwo))  {
+            return idOne;
+        }
+        int idOneNumber = Integer.parseInt(idOne.substring(8));
+        int idTwoNumber = Integer.parseInt(idTwo.substring(8));
+        return idOneNumber > idTwoNumber ? idOne : idTwo;
+    }
+
 
     public static String generateOrderFormId(String id) {
         if (StringUtils.isEmpty(id)) {

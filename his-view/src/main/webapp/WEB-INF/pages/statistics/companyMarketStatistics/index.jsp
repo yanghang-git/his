@@ -36,7 +36,7 @@
                             <input type="text" autocomplete="off"  name="endDate" id="endDate" class="layui-input">
                         </div>
                     </div>
-                    <button type="button" id="search">12</button>
+                    <button type="button" class="layui-btn layui-btn-normal" id="search">查询</button>
                 </div>
             </form>
             <div class="layui-col-md6" id="main" style="width: 600px;height: 425px;margin-top: 20px"></div>

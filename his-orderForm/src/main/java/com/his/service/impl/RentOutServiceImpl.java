@@ -52,5 +52,21 @@ public class RentOutServiceImpl extends ServiceImpl<RentOutMapper, RentOut> impl
         wrapper.ge(!StringUtils.isEmpty(generateTimeStart) ,RentOut::getGenerateTime ,generateTimeStart);
         wrapper.le(!StringUtils.isEmpty(generateTimeEnd) , RentOut::getGenerateTime , generateTimeEnd);
         return page(page, wrapper);
-    }   
+    }
+
+
+    @Override
+    public Page<RentOut> searchPageByOddNumbersAndClientIdNumbser(Integer current, Integer size, String oddNumbers, List<String> clientList,Integer adminShop,Integer isPickUp) {
+        Page<RentOut> page = new Page<>(current, size);
+        LambdaQueryWrapper<RentOut> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(clientList != null && clientList.size() > 0, RentOut::getClientId, clientList);
+        wrapper.eq(!StringUtils.isEmpty(oddNumbers), RentOut::getOddNumbers, oddNumbers);
+        wrapper.eq(!StringUtils.isEmpty(adminShop), RentOut::getRentOutShop, adminShop);
+        wrapper.eq(isPickUp != 0, RentOut::getIsPickUp, isPickUp);
+        return page(page, wrapper);
+    }
+
+
+
+
 }

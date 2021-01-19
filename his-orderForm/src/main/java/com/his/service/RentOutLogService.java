@@ -8,4 +8,6 @@ public interface RentOutLogService extends IService<RentOutLog> {
 
     Page<RentOutLog> searchPage(Integer page, Integer limit, String clientName, String logNumbers, String ofTheTime, String actualReturnTime);
 
+    String getLastOddNumbers();
+
 }

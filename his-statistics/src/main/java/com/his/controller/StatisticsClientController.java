@@ -26,7 +26,7 @@ public class StatisticsClientController {
     @RequestMapping("address")
     public LayuiResult<?> searchAddressByKeyword(String keyword) {
         Set<EchartsData> set = statisticsClientService.searchAddressByKeyword(keyword);
-        return set.size() > 1 ?LayuiResult.success(set) : LayuiResult.failed(keyword + "下无数据");
+        return LayuiResult.success(set);
     }
 
 

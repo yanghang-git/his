@@ -3,9 +3,11 @@ package com.his.test.authority;
 import com.his.config.SpringConfig;
 import com.his.mapper.KpPermRoleMapper;
 import com.his.mapper.KpPermissionMapper;
+import com.his.mapper.RentOutLogMapper;
 import com.his.pojo.KpPermRole;
 import com.his.pojo.KpPermission;
 import com.his.service.KpPermissionService;
+import com.his.util.Util;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,11 +37,12 @@ public class KpPermissionServiceTest {
     @Autowired
     private KpPermRoleMapper kpPermRoleMapper;
 
+    @Autowired
+    private RentOutLogMapper rentOutLogMapper;
+
     @Test
     public void insertPerm() {
-        List<KpPermission> roles = kpPermissionService.list();
-        List<KpPermRole> collect = roles.stream().map(item -> new KpPermRole(item.getPermId(), 10)).collect(Collectors.toList());
-        kpPermRoleMapper.insertBatch(collect);
+        System.out.println(Util.compareFormId("202002010005", "202101050006"));
     }
 
 

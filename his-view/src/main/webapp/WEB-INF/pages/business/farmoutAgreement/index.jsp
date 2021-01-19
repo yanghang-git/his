@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">起始日期:</label>
+                        <label class="layui-form-label">订单日期:</label>
                         <div class="layui-input-inline" style="width: 120px;">
                             <input type="text" name="ofTheTimeStart" id="dateStart" class="layui-input">
                         </div>

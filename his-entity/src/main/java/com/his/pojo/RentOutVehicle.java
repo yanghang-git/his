@@ -1,14 +1,29 @@
 package com.his.pojo;
 
-import java.io.Serializable;
 
-public class RentOutVehicle implements Serializable {
 
-  private static final long serialVersionUID = -1440927629759562400L;
-  private String oddNumbers;
-  private String vehiclePlateNumber;
-  private Double rentOutMoney;
-  private Double rentalDeposit;
+
+public class RentOutVehicle {
+
+	/**
+	 * 出租单号
+	 */
+	private String oddNumbers;
+
+	/**
+	 * 车辆表id（外键）
+	 */
+	private String vehiclePlateNumber;
+
+	/**
+	 * 租借价格
+	 */
+	private Double rentOutMoney;
+
+	/**
+	 * 押金
+	 */
+	private Double rentalDeposit;
 
   public RentOutVehicle() {}
 

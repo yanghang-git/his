@@ -3,9 +3,9 @@ package com.his.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.pojo.Client;
 import com.his.service.ClientService;
+import com.his.service.RentOutService1;
 import com.his.util.LayuiResult;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +28,12 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private RentOutService1 rentOutService;
+
     @RequestMapping("getListByClientIdNumber")
     public LayuiResult<List<Client>> getListByClientIdNumber(String clientIdNumber, Integer size) {
+        System.out.println(clientIdNumber+"   "+size);
         List<Client> userPage = clientService.getSizeListByClientIdNumber(clientIdNumber, size);
         return LayuiResult.success(userPage);
     }
@@ -39,14 +43,14 @@ public class ClientController {
         List<Client> userPage = clientService.list();
         return LayuiResult.success(userPage);
     }
-    @RequiresPermissions("client:search")
+//    @RequiresPermissions("client:search")
     @RequestMapping("getPage")
     public LayuiResult<List<Client>> getPage(Integer page, Integer limit, String clientIdNumber, String clientName, String clientPhone, String clientAddress, Boolean clientSex) {
         Page<Client> userPage = clientService.searchPage(page, limit, clientIdNumber, clientName, clientPhone, clientAddress, clientSex);
         return LayuiResult.success(userPage);
     }
 
-    @RequiresPermissions("client:add")
+//    @RequiresPermissions("client:add")
     @RequestMapping("save")
     public LayuiResult<?> save(Client client) {
         if (client.getCreateTime() == null) {
@@ -56,17 +60,20 @@ public class ClientController {
         return flag ? LayuiResult.success("添加成功") : LayuiResult.failed("添加失败");
     }
 
-    @RequiresPermissions("client:edit")
+//    @RequiresPermissions("client:edit")
     @RequestMapping("edit")
     public LayuiResult<?> edit(Client client) {
         boolean flag = clientService.updateById(client);
         return flag ? LayuiResult.success("修改成功") : LayuiResult.failed("修改失败");
     }
 
-    @RequiresPermissions("client:remove")
+//    @RequiresPermissions("client:remove")
     @RequestMapping("remove")
     public LayuiResult<?> remove(String[] ids) {
-        // 删除之前需要判断客户当前是否有正在租借的车辆
+        boolean isLease = rentOutService.checkClientWhetherBeingLease(Arrays.asList(ids));
+        if (isLease) {
+            return LayuiResult.failed("此用户正在租赁订单，无法删除！");
+        }
         boolean flag = clientService.removeByIds(Arrays.asList(ids));
         return flag ? LayuiResult.success("删除成功") : LayuiResult.failed("删除失败");
     }

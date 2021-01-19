@@ -3,7 +3,7 @@ package com.his.test.statistics;
 import com.his.config.SpringConfig;
 import com.his.mapper.ReturnVehicleSmsMapper;
 import com.his.pojo.ReturnVehicleSms;
-import com.his.service.RentOutLogService;
+import com.his.service.RentOutLogService1;
 import com.his.service.StatisticsClientService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ public class StatisticsServiceTest {
     private StatisticsClientService statisticsClientService;
 
     @Autowired
-    private RentOutLogService rentOutLogService;
+    private RentOutLogService1 rentOutLogService;
 
     @Autowired
     private ReturnVehicleSmsMapper returnVehicleSmsMapper;

@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.his.exception.OrderFormSaveFailedException;
 import com.his.mapper.VehicleMapper;
+import com.his.pojo.KpAdmin;
 import com.his.pojo.Vehicle;
 import com.his.service.VehicleService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -60,8 +62,8 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle>  imp
         LambdaQueryWrapper<Vehicle> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Vehicle::getVehicleState, false);
         wrapper.eq(Vehicle::getShop, shopId);
-        List<Vehicle> list = list(wrapper);
         wrapper.in(Vehicle::getLicensePlateNumber, vehicleList);
+        List<Vehicle> list = list(wrapper);
         if (list != null && list.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
@@ -77,5 +79,19 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle>  imp
     @Override
     public String searchVehicleDescByPrimaryKey(String primaryKey) {
         return getById(primaryKey).getVehicleDescribe();
+    }
+
+    @Override
+    public Page<Vehicle> searchPage(Integer current, Integer size, String plateNumber, Integer type, String color, String desc, Boolean outState) {
+        KpAdmin admin = (KpAdmin) SecurityUtils.getSubject().getPrincipal();
+        Page<Vehicle> page = new Page<>(current, size);
+        LambdaQueryWrapper<Vehicle> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Vehicle::getShop, admin.getAdminShop());
+        wrapper.eq(!StringUtils.isEmpty(plateNumber), Vehicle::getLicensePlateNumber, plateNumber);
+        wrapper.eq(type != null, Vehicle::getVehicleType, type);
+        wrapper.eq(outState != null, Vehicle::getVehicleState, outState);
+        wrapper.like(!StringUtils.isEmpty(color), Vehicle::getVehicleColor, color);
+        wrapper.like(!StringUtils.isEmpty(desc), Vehicle::getVehicleDescribe, desc);
+        return page(page, wrapper);
     }
 }

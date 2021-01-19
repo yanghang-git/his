@@ -25,4 +25,7 @@ public interface VehicleService extends IService<Vehicle> {
     void checkOrderFormOfVehicleWhetherRent(List<String> vehicleList, Integer shopId);
 
     String searchVehicleDescByPrimaryKey(String primaryKey);
+
+    Page<Vehicle> searchPage(Integer current, Integer size, String plateNumber, Integer type, String color, String desc, Boolean outState);
+
 }

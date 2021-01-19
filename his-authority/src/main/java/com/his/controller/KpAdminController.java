@@ -29,6 +29,11 @@ public class KpAdminController {
     @Autowired
     private KpAdminService kpAdminService;
 
+    @RequestMapping("list")
+    public LayuiResult<List<KpAdmin>> getList() {
+        return LayuiResult.success(kpAdminService.list());
+    }
+
     @RequiresPermissions("admin:search")
     @RequestMapping("getPage")
     public LayuiResult<List<KpAdmin>> getPageByUsernameAndRoleId(Integer page, Integer limit, @RequestParam(defaultValue = "-1") Integer adminShop, String loginName, String phone) {
