@@ -23,7 +23,6 @@
               <a><cite>门店管理</cite></a>
             </span>
         </div>
-
         <%-- main --%>
         <div style="background: #fff; margin: 15px; padding: 20px">
             <%-- 筛选条件 --%>
@@ -120,6 +119,8 @@
         });
     });
 
+
+
     // 添加role
     function add() {
         layui.use(['jquery', 'form', 'layer', 'table'], function () {
@@ -136,26 +137,29 @@
                     let data = form.val('shopBoxFilter');
                     if (data['shopName'].trim() === '' || data['shopAddress'].trim() === '') {
                         layer.msg('请填写完整的信息后再次点击添加');
-                        return;
-                    }
-                    $.post("/shop/save", data)
-                        .done(function ({code, msg}) {
-                            if (code > 0) {
-                                $('.layui-laypage-skip input').val(99999);
-                                if ($('.layui-laypage-skip input').val() === 1) {
-                                    table.reload('userTableId');
-                                } else {
-                                    $('.layui-laypage-skip .layui-laypage-btn').click();
+                    } else if (!/^.+省.+市.+区.+(街|路).+/.test(data.shopAddress)) {
+                        layer.msg('请填写正确的地址 格式： Xxx省Xxx市Xxx区Xxx街/路Xxx');
+                    } else {
+                        $.post("/shop/save", data)
+                            .done(function ({code, msg}) {
+                                if (code > 0) {
+                                    $('.layui-laypage-skip input').val(99999);
+                                    if ($('.layui-laypage-skip input').val() === 1) {
+                                        table.reload('userTableId');
+                                    } else {
+                                        $('.layui-laypage-skip .layui-laypage-btn').click();
+                                    }
                                 }
-                            }
-                            layer.msg(msg);
-                        });
-                    $('#shopBox form')[0].reset();
-                    layer.close(index);
+                                layer.msg(msg);
+                            });
+                        $('#shopBox form')[0].reset();
+                        layer.close(index);
+                    }
                 }
             });
         })
     }
+
 
     // 修改role
     function edit(data) {
@@ -174,17 +178,19 @@
                     let data = form.val('shopBoxFilter');
                     if (data['shopName'].trim() === '' || data['shopAddress'].trim() === '') {
                         layer.msg('请填写完整的信息后再次点击修改');
-                        return;
+                    } else if (!/^.+省.+市.+区.+(街|路).+/.test(data.shopAddress)) {
+                        layer.msg('请填写正确的地址 格式： Xxx省Xxx市Xxx区Xxx街/路Xxx');
+                    } else {
+                        $.post("/shop/edit", data)
+                            .done(function ({code, msg}) {
+                                if (code > 0) {
+                                    table.reload('roleTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
+                                }
+                                layer.msg(msg);
+                            });
+                        $('#shopBox form')[0].reset();
+                        layer.close(index);
                     }
-                    $.post("/shop/edit", data)
-                        .done(function ({code, msg}) {
-                            if (code > 0) {
-                                table.reload('roleTableId', {page: {curr: $('.layui-laypage-skip input').val()}})
-                            }
-                            layer.msg(msg);
-                        });
-                    $('#shopBox form')[0].reset();
-                    layer.close(index);
                 }
             });
         })
@@ -249,9 +255,7 @@
 </script>
 <script type="text/html" id="roleTableToolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
-        </button>
-        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove"><i class="layui-icon"></i>删除
-        </button>
+        <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>新增</button>
+        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="remove"><i class="layui-icon"></i>删除</button>
     </div>
 </script>

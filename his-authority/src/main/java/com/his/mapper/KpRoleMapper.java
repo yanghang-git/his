@@ -29,4 +29,7 @@ public interface KpRoleMapper extends BaseMapper<KpRole> {
             "<foreach collection='list' item='roleAdmin' separator=','> (#{roleAdmin.roleId}, #{roleAdmin.adminId})</foreach>" +
             "</script>")
     Boolean insertBatch(ArrayList<KpRoleAdmin> list);
+
+    @Select("select r.role_label from kp_role r inner join kp_role_admin ra on r.role_id = ra.role_id where ra.admin_id = #{adminId}")
+    List<String> selectRoleNameByKpAdminId(Integer adminId);
 }

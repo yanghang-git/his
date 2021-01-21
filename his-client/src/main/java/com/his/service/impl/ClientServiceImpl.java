@@ -9,6 +9,7 @@ import com.his.service.ClientService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,5 +58,14 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
             wrapper.like(Client::getClientName, clientName);
             return list(wrapper).stream().map(Client::getClientIdNumber).collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public Integer selectNewClientCountByShopAndRegisterDate(Integer shopId, LocalDate startDate, LocalDate endDate) {
+        LambdaQueryWrapper<Client> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(shopId != null && shopId != 0, Client::getRegisterShop, shopId)
+            .ge(startDate != null, Client::getCreateTime, startDate)
+            .lt(endDate != null, Client::getCreateTime, endDate);
+        return count(wrapper);
     }
 }

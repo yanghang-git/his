@@ -7,6 +7,15 @@ function getMapByArr(arr, key) {
     return map;
 }
 
+function mapConstantKey(map, targetKey) {
+    map.forEach((value, key) => {
+        if (key === targetKey) {
+            return true;
+        }
+    });
+    return false;
+}
+
 function getMapKeys(map) {
     let keys = [];
     map.forEach((value, key) => {

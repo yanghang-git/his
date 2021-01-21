@@ -23,4 +23,6 @@ public interface KpRoleService extends IService<KpRole> {
     List<String> getRoleCodeByUserId(Integer userId);
 
     Boolean checkRoleAdminIsExist(Integer[] ids);
+
+    List<String> searchRoleNameByKpAdminId(Integer adminId);
 }

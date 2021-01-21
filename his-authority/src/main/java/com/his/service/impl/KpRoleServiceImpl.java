@@ -9,6 +9,7 @@ import com.his.mapper.KpRoleMapper;
 import com.his.pojo.KpPermRole;
 import com.his.pojo.KpRole;
 import com.his.pojo.KpRoleAdmin;
+import com.his.service.KpAdminService;
 import com.his.service.KpRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,11 @@ public class KpRoleServiceImpl extends ServiceImpl<KpRoleMapper, KpRole> impleme
         LambdaQueryWrapper<KpRoleAdmin> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(KpRoleAdmin::getRoleId, Arrays.asList(ids));
         return kpRoleAdminMapper.selectCount(wrapper) != 0;
+    }
+
+    @Override
+    public List<String> searchRoleNameByKpAdminId(Integer adminId) {
+        return kpRoleMapper.selectRoleNameByKpAdminId(adminId);
     }
 
     @Override

@@ -17,6 +17,7 @@ public class Client implements Serializable {
   private String clientPhone;
   private Boolean clientSex;
   private String clientAddress;
+  private Integer registerShop;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm") // 配合@RequestBody使用. 请求方式为application/json时使用
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") // 请求方式为application/x-www-form-urlencoded时使用 form请求方式
@@ -24,12 +25,13 @@ public class Client implements Serializable {
 
   public Client() {}
 
-  public Client(String clientIdNumber, String clientName, String clientPhone, Boolean clientSex, String clientAddress, LocalDateTime createTime) {
+  public Client(String clientIdNumber, String clientName, String clientPhone, Boolean clientSex, String clientAddress, Integer registerShop, LocalDateTime createTime) {
     this.clientIdNumber = clientIdNumber;
     this.clientName = clientName;
     this.clientPhone = clientPhone;
     this.clientSex = clientSex;
     this.clientAddress = clientAddress;
+    this.registerShop = registerShop;
     this.createTime = createTime;
   }
 
@@ -86,6 +88,13 @@ public class Client implements Serializable {
     this.createTime = createTime;
   }
 
+  public Integer getRegisterShop() {
+    return registerShop;
+  }
+
+  public void setRegisterShop(Integer registerShop) {
+    this.registerShop = registerShop;
+  }
 
   @Override
   public String toString() {
@@ -93,8 +102,9 @@ public class Client implements Serializable {
             "clientIdNumber='" + clientIdNumber + '\'' +
             ", clientName='" + clientName + '\'' +
             ", clientPhone='" + clientPhone + '\'' +
-            ", clientSex='" + clientSex + '\'' +
+            ", clientSex=" + clientSex +
             ", clientAddress='" + clientAddress + '\'' +
+            ", registerShop=" + registerShop +
             ", createTime=" + createTime +
             '}';
   }

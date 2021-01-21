@@ -1,18 +1,24 @@
 package com.his.test.statistics;
 
+import com.alibaba.druid.util.lang.Consumer;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.his.config.SpringConfig;
 import com.his.mapper.ReturnVehicleSmsMapper;
-import com.his.pojo.ReturnVehicleSms;
-import com.his.service.RentOutLogService1;
-import com.his.service.StatisticsClientService;
+import com.his.pojo.*;
+import com.his.service.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Description: TO DO
@@ -28,24 +34,30 @@ public class StatisticsServiceTest {
     private StatisticsClientService statisticsClientService;
 
     @Autowired
-    private RentOutLogService1 rentOutLogService;
+    private RentOutLogService rentOutLogService;
 
     @Autowired
-    private ReturnVehicleSmsMapper returnVehicleSmsMapper;
+    private VehicleService vehicleService;
 
+    @Autowired
+    private StatisticsShopService statisticsShopService;
+
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ShopService shopService;
+
+
+    @Autowired
+    private JsonMapper mapp;
     @Test
-    public void testSearchByAddressKeyword() {
-        returnVehicleSmsMapper.delete(null);
-        for (int i = 1; i <= 10; i++) {
-            LocalDateTime time = LocalDateTime.now().plusSeconds(10).plusSeconds(i * 10);
-            returnVehicleSmsMapper.insert(new ReturnVehicleSms("1"+i, "王"+i, "ShopName", "ShopAddress", "#DSdsgf", time.format(DateTimeFormatter.ofPattern("ss mm HH dd MM ? yyyy")), time));
-        }
-        System.out.println(returnVehicleSmsMapper.selectList(null));
-        try {
-            Thread.sleep(200000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    public void testSearchByAddressKeyword() throws JsonProcessingException {
+        LocalDate start = LocalDate.parse("2020-06-01");
+        LocalDate end = LocalDate.parse("2022-01-01");
+        JsonMapper mapper = new JsonMapper();//JsonMapper.builder().build();
+        KpRoleAdmin kpRoleAdmin = new KpRoleAdmin(1, 2);
+        String s = mapp.writeValueAsString(kpRoleAdmin);
+        System.out.println(s);
     }
 }

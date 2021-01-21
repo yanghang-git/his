@@ -72,7 +72,7 @@ public class OrderFormController {
     // 查询 + 分页
     // Request 请求  Mapping  映射
     @RequestMapping("searchPage")
-    public LayuiResult<List<RentOut>> searchPage(Integer page, Integer limit, String clientName, String oddNumbers , String ofTheTimeStart, String ofTheTimeEnd){
+    public LayuiResult<List<RentOut>> searchPage(Integer page, Integer limit, String clientName, String oddNumbers, String ofTheTimeStart, String ofTheTimeEnd){
         Page<RentOut> rentOut = orderFormService.select(page, limit, clientName, oddNumbers, ofTheTimeStart, ofTheTimeEnd);
         return LayuiResult.success(rentOut);
     }

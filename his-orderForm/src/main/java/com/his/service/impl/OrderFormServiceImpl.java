@@ -67,6 +67,7 @@ public class OrderFormServiceImpl implements OrderFormService {
         if (vo.getIsAdd()) {
             vo.getClient().setCreateTime(LocalDateTime.now());
             vo.getClient().setClientSex(true);
+            vo.getClient().setRegisterShop(admin.getAdminShop());
             clientService.save(vo.getClient());
         } else if (vo.getIsUpdate()) {
             clientService.updateById(vo.getClient());

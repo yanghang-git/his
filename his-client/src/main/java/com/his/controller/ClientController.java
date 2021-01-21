@@ -2,10 +2,12 @@ package com.his.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.his.pojo.Client;
+import com.his.pojo.KpAdmin;
 import com.his.service.ClientService;
 import com.his.service.RentOutService1;
 import com.his.util.LayuiResult;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +58,8 @@ public class ClientController {
         if (client.getCreateTime() == null) {
             client.setCreateTime(LocalDateTime.now());
         }
+        KpAdmin admin = (KpAdmin) SecurityUtils.getSubject().getPrincipal();
+        client.setRegisterShop(admin.getAdminShop());
         boolean flag = clientService.save(client);
         return flag ? LayuiResult.success("添加成功") : LayuiResult.failed("添加失败");
     }

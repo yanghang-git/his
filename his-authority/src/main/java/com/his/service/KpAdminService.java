@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.his.pojo.KpAdmin;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
+import java.time.LocalDate;
+import java.util.List;
+
 /**
  * Description: TO DO
  * Date: 20-12-10
@@ -25,4 +28,7 @@ public interface KpAdminService extends IService<KpAdmin> {
      * @param loginName 登录帐号
      */
     void checkAdminOfShopIsExist(String loginName);
+
+    List<String> searchAdminNameByShopIdAndEmployee(Integer shopId, String employeeName);
+
 }

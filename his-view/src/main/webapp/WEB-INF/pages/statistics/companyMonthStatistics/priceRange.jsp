@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: spring
-  Date: 21-1-1
-  Time: 下午2:13
+  Date: 21-1-19
+  Time: 下午7:14
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -18,11 +18,12 @@
     <div class="layui-body" style="background: #f2f2f2">
         <div class="layui-row" style="background: #fff; padding: 10px 30px">
             <span class="layui-breadcrumb">
-              <a><cite>HIS</cite></a>
+                <a href="index">HIS</a>
+                <a><cite>月份出租价格区间统计</cite></a>
             </span>
         </div>
         <div style="background: #fff; margin: 15px; padding: 20px" class="layui-row">
-            <form class="layui-form layui-col-md6">
+            <form class="layui-form layui-col-md4">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">起始时间</label>
@@ -39,9 +40,9 @@
                     <button type="button" class="layui-btn layui-btn-normal" id="search">查询</button>
                 </div>
             </form>
-            <div class="layui-col-md6" id="main" style="width: 600px;height: 425px;margin-top: 20px"></div>
+            <div class="layui-col-md8" id="main" style="width: 820px;height: 425px;margin-top: 20px"></div>
         </div>
-        </div>
+    </div>
     <div class="layui-footer" style="background: #fff">
         <!-- 底部固定区域 -->
         © his.com - 高端汽车管理系统
@@ -53,10 +54,9 @@
     let myChart = echarts.init(document.getElementById('main'));
     myChart.setOption({
         title: {
-            text: '月份销售额',
+            text: '月出租价格区间',
             left: 'center'
         },
-        color: ['#3398DB'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -65,28 +65,44 @@
         },
         grid: {
             left: '3%',
-            right: '4%',
+            right: '8%',
             bottom: '3%',
             containLabel: true
         },
-        xAxis: [
-            {
-                type: 'category',
-                axisTick: {
-                    alignWithLabel: true
-                }
+        xAxis: {
+            type: 'category',
+            axisTick: {
+                alignWithLabel: true
             }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
+        },
+        yAxis: {
+            type: 'value'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'right'
+        },
         series: [
             {
-                name: '金额',
+                name: '1-499',
                 type: 'bar',
-                barWidth: '60%',
+                barWidth: '10%',
+                itemStyle: {
+                    barBorderRadius: 5
+                }
+            },
+            {
+                name: '500-1499',
+                type: 'bar',
+                barWidth: '10%',
+                itemStyle: {
+                    barBorderRadius: 5
+                }
+            },
+            {
+                name: '>1500',
+                type: 'bar',
+                barWidth: '10%',
                 itemStyle: {
                     barBorderRadius: 5
                 }
@@ -116,23 +132,29 @@
 
     document.getElementById('search').onclick = function() {
         $.ajax({
-            url:'/statistics/rentOutLog/date',
-            data: {startDate: $('#startDate').val() + "-01", endDate: $('#endDate').val() + "-01"},
+            url:'/statistics/rentOutLog/priceRange',
+            data: {startDate: $('#startDate').val().length === 0 ? '' : $('#startDate').val() + "-01", endDate: $('#endDate').val().length === 0 ? '' : $('#endDate').val() + "-01"},
             method: 'post',
             success: function({code, msg, data}) {
                 if (code < 0) {
                     layer.msg(msg);
                 } else {
                     let xData = [];
-                    let sData = [];
+                    let seriesOne = [];
+                    let seriesTwo = [];
+                    let seriesThree = [];
                     for(let key in data) {
                         xData.push(key);
-                        sData.push(data[key]);
+                        seriesOne.push(data[key][0]);
+                        seriesTwo.push(data[key][1]);
+                        seriesThree.push(data[key][2]);
                     }
-                    myChart.setOption({xAxis: {data:xData}, series: [{data:sData}]});
-
+                    let series = myChart.getOption().series;
+                    series[0].data = seriesOne;
+                    series[1].data = seriesTwo;
+                    series[2].data = seriesThree;
+                    myChart.setOption({xAxis: {data:xData}, series});
                 }
-
             }
         })
     }

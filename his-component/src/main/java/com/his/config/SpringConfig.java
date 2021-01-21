@@ -7,12 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -32,6 +30,7 @@ import java.io.IOException;
 @ComponentScan(basePackages = {"com.his.service", "com.his.config.etc", "com.his.task"})
 @PropertySource("classpath:jdbc.properties")
 @Configuration
+@Import({PathMatchingResourcePatternResolver.class})
 @EnableTransactionManagement
 public class SpringConfig {
 
@@ -48,17 +47,13 @@ public class SpringConfig {
         return source;
     }
 
-    @Bean
-    public PathMatchingResourcePatternResolver resolver() {
-        return new PathMatchingResourcePatternResolver();
-    }
 
     @Bean
-    public MybatisSqlSessionFactoryBean sqlSessionFactoryBean() throws IOException {
+    public MybatisSqlSessionFactoryBean sqlSessionFactoryBean(PathMatchingResourcePatternResolver resolver) throws IOException {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource());
-        sqlSessionFactoryBean.setConfigLocation(resolver().getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactoryBean.setMapperLocations(resolver().getResources("classpath:mapper/*.xml"));
+        sqlSessionFactoryBean.setConfigLocation(resolver.getResource("classpath:mybatis-config.xml"));
+        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
         sqlSessionFactoryBean.setTypeEnumsPackage("com.his.eunms");
         sqlSessionFactoryBean.setGlobalConfig(globalConfig());
         sqlSessionFactoryBean.setPlugins(mybatisPlusInterceptor());

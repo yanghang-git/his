@@ -4,6 +4,7 @@ import com.his.echarts.entity.EchartsData;
 import com.his.service.StatisticsClientService;
 import com.his.util.LayuiResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

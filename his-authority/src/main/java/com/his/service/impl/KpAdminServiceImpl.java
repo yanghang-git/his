@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description: TO DO
@@ -96,6 +98,11 @@ public class KpAdminServiceImpl extends ServiceImpl<KpAdminMapper, KpAdmin> impl
         if (kpAdminMapper.checkAdminOfShopIsExist(loginName) == 0) {
             throw new ShopNotExistException("登录的门店不存在");
         }
+    }
+
+    @Override
+    public List<String> searchAdminNameByShopIdAndEmployee(Integer shopId, String employeeName) {
+        return kpAdminMapper.selectAdminNameByShopIdAndEmployee(shopId, employeeName);
     }
 
     private Boolean saveInRole(Integer adminId, Integer[] roleIds) {

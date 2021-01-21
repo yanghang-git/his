@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.his.pojo.Client;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -22,4 +23,5 @@ public interface ClientService extends IService<Client> {
 
     List<String> getClientIdNumberByClientName(String clientName);
 
+    Integer selectNewClientCountByShopAndRegisterDate(Integer shopId, LocalDate startDate, LocalDate endDate);
 }
